@@ -1,0 +1,78 @@
+% !TEX root = ../thesis_heinly.tex
+
+\documentclass[\thesisfontsize pt,letterpaper,twoside]{report}
+
+% Layout
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage[subfigure]{tocloft}
+\usepackage{etoolbox}
+\usepackage{changepage}
+\usepackage{indentfirst}
+\usepackage[hang]{footmisc}
+
+% Remove the extra space between figures/tables from different chapters in the list of figures/tables.
+\makeatletter
+\patchcmd{\@chapter}{\addtocontents{lof}{\protect\addvspace{10\p@}}}{}{}{}% List of figures
+\patchcmd{\@chapter}{\addtocontents{lot}{\protect\addvspace{10\p@}}}{}{}{}% List of tables
+\makeatother
+
+% Citation style
+\usepackage{natbib}
+\usepackage{apalike}
+
+% include citations inline
+\usepackage{bibentry}
+\nobibliography*
+
+% Figures
+%\usepackage{subfigure}
+\usepackage{subfig}
+\usepackage{epsfig}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{tabu}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{caption}
+\captionsetup[table]{font={stretch=0.95}}
+\captionsetup[figure]{font={stretch=0.95}}
+
+% Math
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Typography
+\usepackage{times}
+\usepackage{microtype}
+\usepackage{textcomp}
+
+% Macro support
+\usepackage{xspace}
+
+% Symbols
+\usepackage{pifont}
+
+% Color
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[table]{xcolor}
+
+% PDF links
+\usepackage[hidelinks]{hyperref} % backref=page
+
+\renewcommand{\algorithmicforall}{\textbf{for each}}
+\def\ForEach{\ForAll}
+
+\input{common/layout}
+
+\input{common/macros}
+
+
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{slashbox}
+\usepackage{tabu}

@@ -1,0 +1,21 @@
+% !TEX root = ../thesis_heinly.tex
+
+\phantomsection
+\addcontentsline{toc}{chapter}{LIST OF ABBREVIATIONS}
+
+\begin{center}
+\textbf{LIST OF ABBREVIATIONS}
+\vspace{16pt}
+\end{center}
+
+\noindent
+\begin{tabular}{@{}p{0.8in} l}
+
+GMST & Generalized minimum spanning tree \\
+NRSFM & Non-rigid structure from motion \\
+SfM & Structure-from-motion \\
+%RANSAC & Random sample consensus \\
+%SIFT & Scale invariant feature transform \cite{lowe2004_sift} \\
+\end{tabular}
+
+\clearpage

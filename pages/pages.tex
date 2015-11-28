@@ -1,0 +1,47 @@
+% !TEX root = ../thesis_heinly.tex
+
+% front matter pages use 2in top margin
+\newgeometry{left=\thesisleftmargin in,top=2in,right=\thesisrightmargin in,bottom=1in,nohead}
+\pagenumbering{roman}
+
+%1. Title Page
+
+\input{pages/titlepage}
+
+%2. Copyright Page (optional)
+\newgeometry{left=\thesisleftmargin in,top=8.42in,right=\thesisrightmargin in,bottom=1in,nohead}
+
+\input{pages/copyright}
+\newgeometry{left=\thesisleftmargin in,top=2in,right=\thesisrightmargin in,bottom=1in,nohead}
+
+%3. Abstract
+
+% Normal pages from here on out; TOC title takes care of 2in requirement.
+\restoregeometry
+
+\input{pages/abstract}
+
+%4. Dedication, Acknowledgement(s) and/or Preface (all optional)
+
+%\input{pages/dedication}
+\input{pages/acknowledgements}
+%\input{pages/preface}
+
+%5. Table of Contents, with page references
+\input{pages/contents}
+
+%6. List of Tables, with titles and page references (if applicable)
+
+\input{pages/tables}
+
+%7. List of Figures or Illustrations, with titles and page references (if applicable)
+
+\input{pages/figures}
+
+%8. List of Abbreviations (if applicable)
+\input{pages/abbreviations}
+
+%9. List of Symbols (if applicable)
+\input{pages/symbols}
+
+\pagenumbering{arabic}

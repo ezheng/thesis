@@ -1,0 +1,47 @@
+% !TEX root = ../thesis_heinly.tex
+
+% Use proper margins.
+\geometry{letterpaper,left=\thesisleftmargin in,top=1in,right=\thesisrightmargin in,bottom=1in,nohead}
+
+% double-space text
+\doublespacing % uses a setstretch of 1.667 for 10pt font, 1.618 for 11pt, and 1.655 for 12pt
+%\setstretch{2.0}
+
+\setlength{\footskip}{0.48in}
+
+% Center chapter titles, omit page numbers.
+%\titleformat{\chapter}[display]{\fillast\bfseries}{\large\MakeUppercase{\chaptertitlename} \thechapter}{-11pt}{\huge\singlespacing}[\thispagestyle{empty}]
+%\titleformat{\chapter}[hang]{\fillast\bfseries}{\large\MakeUppercase{\chaptertitlename~\thechapter:}}{0.5em}{\large}
+\titleformat{\chapter}[block]{\filcenter\bfseries\singlespacing}{\MakeUppercase{\chaptertitlename}~\thechapter:}{0.5em}{\uppercase}
+
+\titleformat{\section}{\normalfont\fontsize{12}{15}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{12}{15}\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{12}{15}\bfseries}{\thesubsubsection}{1em}{}
+
+% Extend to 2in top margins
+% Leave 22pts = 2x font size after heading
+\titlespacing{\chapter}{0in}{0.5in}{22pt}
+
+% Indent paragraphs four spaces throughout the thesis/dissertation.
+\setlength{\parindent}{4ex}
+
+% Tweak spacing of paragraph labels.
+\titlespacing{\paragraph}{0in}{0.08in}{0.07in}
+
+% We want numbered subsubsections
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% We need to double-space between footnotes.
+\setlength{\footnotesep}{13pt}
+\setlength{\footnotemargin}{0.5em}
+
+% We don't want crazy vertical spacing.
+\raggedbottom
+
+% We don't want abandoned words.
+\clubpenalty=10000 
+\widowpenalty=10000
+
+% Prevent awkward hyphenations.
+\hyphenation{Raj-kumar}

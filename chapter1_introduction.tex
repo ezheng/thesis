@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+
+% \todo{ 1) Describe the importance of 3D information, including its application. but lost in the captuing. 2) 3D recovers information is more difficult than graphics. Static scene reconstruction using color consistency and triangulation. SfM only recovers sparse points. 3) There are existing works about static. Most popular one use photo color consistency  The related problems about the internet work (illumination, resolution, occlusion, etc.), so the robustness is important. Also efficiency is important due to the ever-increasing number of Internet collected photos. 4) Dynamic objects are important part, however those objects are ignored in traditional methods. It is even more difficult to triangulate dynamic objects (why). 5) under constrained problem: different assumptions. More general assumption is better. }
+
+Imagery records how the 3D world looks like by projecting the scene into the image plane. 
+However, the 3D information, which depicts the geometry of real objects, is lost during this capturing process. Conversely, the 3D information is key to many applications, including augmented/virtual reality, robots, autonomous car driving, image enhancement \etc 
+And also as additional information to RGB colors, 3D information is leveraged to improve performance of many computer vision tasks such as object detection and human pose estimation. Therefore, there is a strong desire to recover the 3D information from 2D imagery.
+
+3D information, when saved in a computer, can be represented using 3D point cloud, 3D Polygon meshes or depthmaps. 3D point cloud is a set of data points in three-dimensional space representing the external surface of an object, and it can be classified as dense or sparse based on its density. 3D polygon mesh provides additional information of the geometric topology to 3D points. Comparing to these representations using values in a global coordinate system, a depthmap is a dense field of depth values indicating the distance of the observed surface relative to a camera. In practice, different representations are adopted based on specific applications. 
+
+3D reconstruction from imagery, defined as a process that recovers 3D information from 2D image colors, is a traditional problem in 3D computer vision.
+Unlike the task of computer graphics that renders 2D imagery from 3D geometry, the inverse process of 3D reconstruction from imagery is more challenging since aiming at recovery of lost information inevitably introduces more ambiguities. Though 3D reconstruction has received heavy studies and improved on over the last few decades, it still remains a viable research area. 
+In particular, most existing methods only target the problem of static objects reconstruction, but fail on the dynamic part, which is an important portion of a real scene.
+This dissertation primarily focuses on the problems of dense static scene reconstruction and sparse dynamic object reconstruction from imagery.
+
+\textbf{Dense static scene reconstruction}.
+% %In this work, I focus on the problem of static scene depthmap estimation using crowd sourced images. 
+To attain the 3D information of a static scene, most of the existing works leverage 2D correspondences and available camera parameters for 3D triangulation. Though camera parameters can normally be estimated by structure from motion or offline calibration, obtaining 2D correspondences robustly from image colors still requires further exploration. The 2D correspondences are defined as image pixels that observe the same part of a 3D scene. Under the assumption of Lambertian surface, these 2D correspondences share the same appearances/colors, and hence they have high color consistency.
+
+For each point in one image, finding its correspondence in another image is attained by searching for candidate pixels with best color consistency along a line defined by 3D geometry (called epipolar line), and the positions of candidate pixels are determined by depth hypotheses generated in a valid range. Once the correspondence is found, the depth of the corresponding pixel is uniquely determined. However, estimating dense correspondences robustly is difficult since ambiguities arise in the cases of repetitive textures, homogeneous color regions, or occlusions along the line. 
+
+Recently, there is a growing interest in using the ever-increasing crowd sourced data (\ie~Internet collected photos) for reconstruction, since the large number of free data has intrigued many applications such as photo tour and image enhancement. With the non-controlled imagery as input, finding 2D correspondences based on colors is more challenging due to a diversity of factors presented in Internet collected photos, such as heterogeneous resolution and scene illuminations, unstructured viewing geometry, scene content variability and image registration errors. To address this issue, it is essential to determine a suitable subset of images or pixels for correspondence search. 
+
+Computational complexity for dense reconstruction is typically high, since in tradition the process involves exhaustive evaluations of a large number of depth hypotheses. The increasing availability of crowd-sourced datasets has explicitly brought efficiency and scalability to the forefront of application requirements.  Moreover, the high complexity of a method would impede its usage in less-powerful electronic devices such as smart phones. To this end, there is a compelling demand to develop efficient stereo methods.
+% The recently proposed PatchMatch-based depth sampling scheme successfully reduces the depth hypotheses space by a large amount without sacrificing much of depth accuracy. 
+
+\textbf{Sparse dynamic object reconstruction}.
+The problem of dynamic object reconstruction specifically aims at 3D reconstruction under the circumstance of non-concurrent image captures. To be more precise, the dynamic object is only observed by one image at each time instance. This poses an additional challenge compared to the problem of static  scene reconstruction as 3D triangulation becomes invalid and impossible with unitary observation, even assuming 2D correspondences in non-concurrent images are correctly found. Probably due to the intrinsic difficulty, the state of the art for dynamic object reconstruction falls far behind that of static scene reconstruction.
+
+The problem of dynamic object reconstruction is fundamentally under-constrained, and cannot be solved without further assumptions. 
+Existing works make various assumptions on scene geometry, object motion, capture pattern, \etc
+For instance, most non-rigid structure from motion (NRSFM) methods assume the 3D shapes of deforming objects lie in a low dimensional subspace, and hence any shape can be represented as a linear combination of $K$ shape bases. Trajectory based methods assume smooth motion of the dynamic objects across time. Bao \etal~ assume non-coplanar layout of dynamic objects and cameras, plus a prior knowledge of the object size. When developing methods, in addition to making a valid assumption, having less but general assumptions is vital to enable the methods to work more robustly in most of real scenarios. 
+
+With some assumptions such as the one of smooth object motion, it is important that sequencing information is available. The sequencing information, which is defined as the temporal order of images being taken, tells that a moving 3D point at time $t_1$ and $t_2$ is spatially close, if $t_1$ and $t_2$ are temporally close, \ie~$|t_1-t_2|$ is small. Particularly, it is this spatial proximity that is leveraged by most existing methods. However, this sequencing information is typically unavailable among crowd sourced images or videos. While some of the works assume such information being available, my research in dynamic object reconstruction skip this assumption by focusing on joint estimation of image sequencing and 3D points.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Thesis Statement}
+
+%The efficiency of large-scale structure-from-motion systems can be increased by employing a streaming paradigm for data association, and their robustness improved by post-processing the structure-from-motion result to remove artifacts caused by duplicate structure within a scene.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outline of Contributions}
+
+This dissertation contains several significant contributions that advanced the state of the art in dense static scene reconstruction and sparse dynamic object reconstruciton, and builds upon published works which support these claims \cite{}.
+These contributions include:
+\begin{description}
+
+\item[Streaming Paradigm for Structure-from-Motion Preprocessing:]
+We propose a new paradigm for preparing large-scale datasets for use in structure-from-motion.
+This paradigm is a streaming framework in which images are read only once in a sequential fashion from disk, and useful information about those images is  retained in memory for only as long as it is useful.
+The outputs of this processing are sets of connected components (related images) that are ready for incremental reconstruction.
+This work is described in \citet{heinly2015_streaming}, and detailed in \chref{streaming}.
+
+\item[Structure-from-Motion Post-Processing to Correct for Duplicate Structure:]
+~We propose novel methods to post-process a structure-from-motion result to detect and correct for the presence of artifacts caused by duplicate structure within the imaged scene.
+This work is described in \citet{heinly2014_duplicate_structure} and detailed in \chref{duplicate_structure}.
+
+\item[Efficient Processing for Duplicate Structure Correction:]
+Given the insights gained from the prior contribution, we propose a more efficient post-processing method to perform disambiguation when errors arise due to duplicate structure.
+This work is described in \citet{heinly2014_indistinguishable_geometry} and detailed in \chref{lcc}.
+
+\end{description}
+
+Each of these contributions addresses the issue of data association within the context of structure-from-motion.
+The streaming paradigm of \chref{streaming} shows how the complex relationships between images can be efficiently discovered for world-scale datasets, demonstrating results on a 100 million image dataset \cite{yahoo_100m, thomee2015_data_challenges}.
+The disambiguation method of \chref{duplicate_structure} shows how misregistrations due to duplicate scene structure can be robustly detected and corrected.
+Then, the alternate disambiguation method of \chref{lcc} shows how the same process can be modified with a focus on efficiency and runtime.
+Finally, \chref{discussion} reflects on these contributions, and proposes both practical modifications as well as research directions to continue to advance the state of the art in large-scale data association for structure-from-motion.
