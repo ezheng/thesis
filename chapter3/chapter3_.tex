@@ -20,9 +20,7 @@ Ironically, the potential robustness afforded by having multiple available image
 %For controlled capture environment a priori heuristic determination are generally sufficient
 We tackle this implicit data association problem by addressing the question: {\em What aggregation subset of the source image set should be used to estimate the depth of a particular pixel in the reference image}.
 
-We propose a probabilistic framework  for depthmap estimation that jointly models pixel-level view selection and depthmap estimation given pairwise image photoconsistency. An overview is depicted in Figure \ref{fig:selectionExample}.
-The corresponding graphical model is solved by EM-based view selection probability inference and PatchMatch-like depth sampling and propagation.
-Our approach iteratively alternates between exploration of  the depth search space and updating our formulated probabilistic model. The insight leveraged by our method is the spatial smoothness in the photoconsistency at the correct depth hypothesis of a given pixel \wrt the images in the source image dataset \cite{CombinedDepthOutlier,Goesele07}.
+We propose a probabilistic framework  for depthmap estimation that jointly models pixel-level view selection and depthmap estimation given pairwise image photoconsistency. An overview is depicted in Figure \ref{fig:selectionExample}. The corresponding graphical model is solved by EM-based view selection probability inference and PatchMatch-like depth sampling and propagation. Our approach iteratively alternates between exploration of  the depth search space and updating our formulated probabilistic model. The insight leveraged by our method is the spatial smoothness in the photoconsistency at the correct depth hypothesis of a given pixel \wrt the images in the source image dataset \cite{CombinedDepthOutlier,Goesele07}.
 Our expectation of  having a high overlap of photoconsistent source images among neighboring pixels in the reference image, leads to modeling  the depth estimation problem as a Markov process where the unobserved states correspond to binary indicator variables for the selection probability of each source image.
 
 We summarize the contributions and advantages of the framework as follows.
@@ -282,11 +280,11 @@ normally reaching up to thousands of hypotheses.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Experiments} \label{sec:experiment}
+\section{Experiments} \label{sec2:experiment}
 We evaluate the accuracy of our method on standard ground truth benchmarks and highlight our robustness on multiple crowd sourced datasets.
 In both evaluation scenarios we juxtapose our results with current state-of-the-art methods.
 We implemented our method in CUDA and executed on a Nvidia GTX-Titan GPU.
-For all experiments, the total number multi-directional propagations is set to 3 and we use  $\sigma = 0.45$ in the likelihood function (Equation (\ref{equ:observationModel})) and $\gamma=0.999$ in the transition probabilities (Equation (\ref{equ:transitionProb})).  %refering to Eqs.   \ref{equ:observationModel} and  \ref{equ:transitionProb}, respectively.
+For all experiments, the total number multi-directional propagations is set to 3 and we use  $\sigma = 0.45$ in the likelihood function (Equation (\ref{equ:observationModel})) and $\gamma=0.999$ in the transition probabilities (Equation (\ref{equ:transitionProb})).  %refering to Eqs. \ref{equ:observationModel} and  \ref{equ:transitionProb}, respectively.
 
 \begin{table}[t]
 \centering

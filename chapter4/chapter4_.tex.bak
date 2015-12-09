@@ -31,7 +31,7 @@ To attain the object class trajectory, our method simultaneously determines the 
     }
 \caption{Left: 3 images of the pedestrian dataset and the output of SFM. Right: The reconstruction of two pedestrians that are captured in the single image. Note we only reconstruction one 3D position for each dynamic object instance. For visualization purposes, a general mesh model is inserted into each estimated position.}
 %\end{subfigure}
-\label{fig:gmst}
+%\label{fig:gmst}
 \vspace*{-0.5cm}
 \end{figure}
 

@@ -379,19 +379,14 @@ The ADMM technique allows this problem to be solved approximately by first solvi
 
 In step 1, $\mathbb{W}$ is updated by
 \begin{equation}
-\begin{aligned}
-\allT^{k+1}=&\underset{\mathbf{T}_f \in{\Delta_f} \text{, for} 1\leq f\leq F}{\text{argmin}} \frac{1}{FP} ||\allX - \allX\allT||_\text{F}^2 \\+ &\text{vec}(\mathbb{Y}^k)^\top \text{vec} (\allT) + \frac{\rho}{2} ||\allT-\mathbb{Z}^k||_\text{F}^2, \\
-\end{aligned}
+\allT^{k+1}= \underset{\mathbf{T}_f \in{\Delta_f} \text{, for} 1\leq f\leq F}{\text{argmin}} \frac{1}{FP} ||\allX - \allX\allT||_\text{F}^2 + \text{vec}(\mathbb{Y}^k)^\top \text{vec} (\allT) + \frac{\rho}{2} ||\allT-\mathbb{Z}^k||_\text{F}^2,
 \label{eq:step1}
 \end{equation}
 where the superscript $k$ is the iteration index. $\mathbb{Y}^k$ is the matrix of  dual variables and is initialized with 0. Note that the values of $\mathbb{Y}^{k}$ and $\mathbb{Z}^{k}$ are known during this step -- we only optimize over the variable $\allT$. The optimization can be decomposed into optimizing over $\oneT_f$ independently and in parallel, and we employ the fast solver proposed by \citet{chen:hal-00995911}. 
 
 In step 2, we update the auxiliary variable $\mathbb{Z}$ according to
 \begin{equation}
-\begin{aligned}
-\mathbb{Z}^{k+1} &= \underset{\mathbb{Z}}{\text{argmin }} \frac{\lambda_1}{F}||\mathbb{Z} - \mathbb{Z}^\top ||_\text{F}^2 - \text{vec}(\mathbb{Y}^k)^\top \text{vec}(\mathbb{Z}) \\
-& + \frac{\rho}{2}||\allT^{k+1}-\mathbb{Z}||_\text{F}^2.
-\end{aligned}
+\mathbb{Z}^{k+1} = \underset{\mathbb{Z}}{\text{argmin }} \frac{\lambda_1}{F}||\mathbb{Z} - \mathbb{Z}^\top ||_\text{F}^2 - \text{vec}(\mathbb{Y}^k)^\top \text{vec}(\mathbb{Z}) + \frac{\rho}{2}||\allT^{k+1}-\mathbb{Z}||_\text{F}^2.
 \label{eq:step2}
 \end{equation}
 This is a quadratic programming problem in the unknown variable $\mathbb{Z}$ without constraint and can be easily solved by setting the derivative of Equation (\ref{eq:step2}) with respect to $\mathbb{Z}$ equal to 0. 
@@ -914,11 +909,11 @@ Figure \ref{fig:trajectory_Qualitative_result} shows the large system condition 
 \begin{figure*}
 \centering
 \subfloat[Rothman dataset (250 frames)]{
-\includegraphics[width=0.95\textwidth]{chapter5/resource/2_pdfsam_image_cropped.pdf} 
+\includegraphics[width=0.94\textwidth]{chapter5/resource/2_pdfsam_image_cropped.pdf} 
 }
 
 \subfloat[Juggler dataset (180 frames)]{
-\includegraphics[width=0.95\textwidth]{chapter5/resource/1_pdfsam_image_cropped.pdf}
+\includegraphics[width=0.94\textwidth]{chapter5/resource/1_pdfsam_image_cropped.pdf}
 }
 \caption{The datasets presented in \cite{ballan2010unstructured}. The frame rate of each camera is 12.5 Hz. For each dataset, the top left two show the camera configuration, the top right describes the temporal distribution of each image sequence (a colored grid means the camera of the same color captures one frame at a time instance), and the bottom shows sample reconstruction results. }
 \label{fig:onlinedata}
