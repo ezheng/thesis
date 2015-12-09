@@ -17,7 +17,7 @@ This dissertation presents three works for static scene reconstruction and dynam
 Though our method significantly outperforms existing methods on Internet collected photos, and
 achieves the state-of-the-art accuracy on standard images collected under controlled lab environment \cite{Strecha08}. The accuracy of the method can be further improved by incorporating some standard techniques into our framework. Next, we discuss each of the techniques for possible accuracy improvement.
 
-In the method, we use the frontal-parallel planes to warp color patches into other images for color consistency check. It has been shown the plane orientation affects the reconstruction accuracy \cite{gallup07,FURUKAWA_PAMI2010}. 
+In the method, we use the frontal-parallel planes to warp color patches into other images for color consistency check. It has been shown the plane orientation affects the reconstruction accuracy \cite{Gallup07,FURUKAWA_PAMI2010}. 
 Ideally, the plane orientation should be close to the real surface normal, which is unknown before reconstruction. To address this issue, the surface normal can be included as unknown variables in our framework. Specifically, the normal directions are propagated to the neighboring pixels in addition to the depth \cite{patchMatchStereo1}. This scheme has a potential to further improve reconstruction quality on the regions having large angles with the camera viewing directions (e.g. the ground), but increases the computation complexity.
 
 Another issue relating to the color patch arises if the pixels in a patch cover scenes of significantly different depths, which typically occurs at the boundary of object surfaces. 
