@@ -14,6 +14,7 @@
 GMST & Generalized minimum spanning tree \\
 NRSFM & Non-rigid structure from motion \\
 SfM & Structure-from-motion \\
+MRF & Markov Random Field \\
 %RANSAC & Random sample consensus \\
 %SIFT & Scale invariant feature transform \cite{lowe2004_sift} \\
 \end{tabular}
