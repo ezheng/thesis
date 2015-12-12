@@ -421,7 +421,7 @@ If the frames $f$ and $j$ are from the same video, $D_{(f,j)}$ is set to infinit
 Next, we find many pseudo-intersection points with negative ray depth for spatio-temporally distant pairs of viewing rays, and the corresponding element in $\mathbf{D}$ is also set to infinity.
 Finally, we determine the minimum element of each $f$-th row in our distance matrix $\mathbf{D}$ and assign the corresponding depth values $\mathbf d^*_f$ as our initialization for the definition of our 3D structure $\mathbf{S}_f$.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \includegraphics[width=0.70\textwidth]{chapter5/resource/wrong_init.pdf}
 \caption{Example of incorrect initialization. The dataset `hopBothLegs3hops' \cite{cg-2007-2} has the motion of hopping forward three times. The black and blue shapes (almost overlapped) are the incorrect initialization of the real shapes (shown in green and red) of frames 16 and 89 due to the accidental ray intersections. This typically happens in the case of  periodic motion such as walking or jogging. In the figure, only one set of nearly intersecting rays is plotted.}
@@ -562,7 +562,7 @@ Note that even though system conditions of camera setups in Figures \ref{fig:mul
 
 To illustrate that the shape observed by one video should not be used to represent the shape observed in the same video (statement 1), we conduct an experiment to show the system condition if the observations from different video streams do not interleave. As shown in Figure \ref{fig:frameDist}, the dynamic object is observed by one camera for $N$ frames, and then observed by another camera for $N$ frames. We show empirically that as $N$ increases, the system condition increases monotonically, which indicates larger reconstruction error. If statement 1 is not met, it is likely the consecutive observations from the same video stream are used. This results in a large system condition and hence low reconstructability, even under the assumption that $\allT$ can be correctly estimated.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \subfloat[Observation without overlap]{
 \centering
@@ -765,7 +765,7 @@ We test the case that each capture is randomly assigned to one of the four camer
 \caption{The reconstruction accuracy when the 2D observations are corrupted with Gaussian noise of different standard deviation ($\sigma$).}
 \label{fig:error_noise}
 \end{figure*}
-\begin{figure}[t]
+\begin{figure}
 \centering
 \includegraphics[width=0.75\textwidth]{chapter5/resource/different_lambda.pdf}
 \caption{The difference of the estimated results by the hard constraint formulation in Equation (\ref{eq:X_representedBy_d_all}) and the soft constraint formulation in Equation (\ref{eq:soft_constraint}) with different $\lambda_3$} 
@@ -862,7 +862,7 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 
 %The NRSFM method is closely related to our proposed solution. Their method assumes all the shapes can be represented by a linear combination of shape bases, while ours use self-representation. In the typical NRSFM, 
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \subfloat[Our method accurately reconstructs the 3D points]{
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0001.pdf}

@@ -2,7 +2,7 @@
 
 \section{Introduction} 
 
-\begin{figure*}[t]
+\begin{figure*}
 \centering
     \includegraphics[width=1\columnwidth]{chapter3/resource/combine.pdf}
     \caption{Overview of our  approach. Input imagery is used to jointly estimate a depthmap and pixel level view associations. Blue regions in the view selection probability map indicate pixels in the reference image lacking reliable observations in the corresponding source image.}
@@ -43,7 +43,7 @@ to reduce the three-dimensional search space (depth and two angles for the orien
 
 In the absence of proper depth hypotheses, we additionally draw and test $H$ random depth hypotheses for each pixel during propagations. We use $H=1$ and have 3 depth hypotheses tested per pixel in a propagation, i.e. the depths of current and the neighboring pixel along with one random depth. Without loss of generality,  we limit our discussion henceforth to  the rightward horizontal propagation.
 
-\begin{figure}[t]
+\begin{figure}
 \centering
 %\subfloat{
 %    \includegraphics[height=0.34\columnwidth]{chapter3/resource/propagationPatchMatch.png}
@@ -64,7 +64,7 @@ In our algorithm, the depth is estimated for a reference image $X^{\text{ref}}$,
 Photo-consistency values for the correct depth of a given pixel across a set of source images may be incongruent for some of the source images. This may be attributed to a diversity of factors such as occlusions, calibration errors, illumination aberration, etc.
 Therefore, depth estimation for a given pixel entails the determination of which subset of source images will provide the most robust estimate. Our model defines $M$ binary variables $Z_l^m\in{\{0,1\}}, m = 1, 2...M$ for each pixel $l$ in the reference image $X^{\text{ref}}$, where $Z_l^m$ is 1 if image $X^m$ is selected for depth estimation of pixel $l$, and 0 otherwise.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \includegraphics[width=0.6\textwidth]{chapter3/resource/figure_obmodel_cropped.pdf}
 \caption{Distribution of Equation (\ref{equ:observationModel})}
@@ -92,7 +92,7 @@ P(Z_l^m|Z_{l-1}^m)= \left( \begin{smallmatrix} \gamma & 1- \gamma \\ 1-\gamma& \
 \end{equation}
 Setting $\gamma$ close to 1 encourages  neighboring  pixels to have similar selection preference for source images $X^m$. To enable parallel computation, we only enforce pairwise constraint on the pixels of the same row in the horizontal propagations. Note Figure  \ref{fig:model} only shows one row of selection variables for each of the source images.
 
-\begin{figure}[t]
+\begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{chapter3/resource/graphicalModel_cropped.pdf}
 \caption{The graphical model. $\theta_l$ is the depth of pixel $l$. $Z_l^m$ is the selection of image $m$ at pixel $l$. $X_l^m$ is the observation (colors) on the source image $m$ given depth $\theta_l$.}
@@ -194,7 +194,7 @@ The computation of $\theta_l^*$ requires $q(Z_l^m)$ to be known (Equation (\ref{
 
 
 \subsection{Update Schedule} \label{sec:updateSchedule}
-\begin{figure}[t]
+\begin{figure}
 \centering
     \includegraphics[height=0.42\columnwidth]{chapter3/resource/combine_upschedule.pdf}
 \caption{Update schedule. See text for more details.}
@@ -310,7 +310,7 @@ For all experiments, the total number multi-directional propagations is set to 3
     JAN \cite{JAN} &0.824 & 0.973 & 0.739 & 0.923\\
     \hline
     \end{tabular}
-\caption{The percentage of pixels with absolute error less than 2cm and 10cm. Entries {\em Ours(P)}  and {\em Ours}  denote our results with and without postprocessing.  Reported values are from \citet{LeastCommitment_3DIMPVT2012}.}
+\caption{The percentage of pixels with absolute error less than 2cm and 10cm. Entries {\em Ours(P)}  and {\em Ours}  denote our results with and without postprocessing.  Reported values are from the work by \citet{LeastCommitment_3DIMPVT2012}.}
 \label{tab:data}
 \end{table}
 
@@ -336,7 +336,7 @@ Our basic depth refinement uses a smaller NCC patch (5x5), while eliminating ran
 Finally, a median filter of size 9x9 is applied  to each raw depthmap. %We denote the results of our method without and with postprocessing as OM1 and OM2.
 Table \ref{tab:data} shows our method is comparable to the state-of-the-art methods. Note the results of \citet{LeastCommitment_3DIMPVT2012, TYL, JAN} are obtained through multi-depthmap fusion, while our method directly estimates  individual depthmaps.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \subfloat{
     \includegraphics[width=1\columnwidth]{chapter3/resource/subregionCombine.pdf}
@@ -345,7 +345,7 @@ Table \ref{tab:data} shows our method is comparable to the state-of-the-art meth
 \label{fig:bestK}
 \end{figure}
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \includegraphics[width=0.7\linewidth]{chapter3/resource/planesweepTiming.pdf}
 \caption{Fountain dataset performance. Left: Average running time. Right: Percentage of pixels given different thresholds.  PLA is the planesweep algorithm with all source images and K=3, while GOS is the method by \citet{Goesele07}.}
@@ -376,7 +376,7 @@ Figure \ref{fig:timing} shows the linear dependence of computation time to the n
 %The considered scenario involves a scene with structural symmetry that causes disjoint scene elements  to be incorrectly fused into a single structure.
 Figure \ref{fig:alexander} depicts Alexander Nevsky Cathedral in Sofia having indistinguishable structure in the tower structure (\ie view invariant appearance due to structural symmetry). A set of 136 images, comprised by two mutually exclusive subsets observing the front or back, was fed into VisualSFM \cite{WuVSFM} yielding a corrupted 3D model where symmetric structure is fused along with the disjoint camera clusters. The approach by \citet{Goesele07} initially selects a global subset of $~20$ images based  on the corrupted SFM estimates and select  independently for each pixel's depth estimation a fixed number (typically 4) of images from the global subset (similar to using K-best aggregation with K=4). If the global subset is unbalanced or is contaminated by corrupted estimates the completeness of the model is compromised, as shown in Figure \ref{fig:alexander} where the background dome is missing. We consider the entire dataset and implicitly mitigate such outliers. Moreover, we re-executed the code by \citet{Goesele07} with manually filtered camera poses and indeed achieved correct results.
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{chapter3/resource/alexander.pdf}
 \caption{\label{fig:alexander} Top: Front and back of Alexander Nevsky Cathedral and estimated 3D model. Bottom: original image, depthmap of our method and the method by \citet{Goesele07} with wrong and correct camera poses.
@@ -384,7 +384,7 @@ Figure \ref{fig:alexander} depicts Alexander Nevsky Cathedral in Sofia having in
 \end{figure}
 
 {\bf Robustness to varying capture characteristics}.
-\begin{figure*}[]
+\begin{figure*}
 \centering
 \includegraphics[width=1\linewidth]{chapter3/resource/allResultsCombine.pdf}
 \caption{Each image triplet  depicts a reference image along with our and Goesele's (\cite{Goesele07}) depthmap output (Best viewed in color).}
@@ -403,7 +403,7 @@ To quantitatively compare the accuracy of our results with the work by \citet{Go
 
 
 
-\begin{figure}[]
+\begin{figure}
 \centering
 \centering
 \includegraphics[width=0.60\linewidth]{chapter3/resource/compareGoesele.pdf}
@@ -415,7 +415,7 @@ To quantitatively compare the accuracy of our results with the work by \citet{Go
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
-We have presented an efficient and effective joint solution to the view selection and depth estimation problems in multi-view stereo. Our solution relies on estimating a selection probability of each image in the source image set on the pixel level. The selection probability encodes the existence of contingency issues such as occlusions, specular aberrations and calibration errors. Moreover, by automatically determining reference image data associations with respect to a general source image dataset, we can encompass a larger range input imagery while increasing overall system robustness. Our approach has also extended the PatchMatch algorithms to encompass robust multi-view depth estimation within a probabilistic framework. Reported results achieve state of the art accuracy in ground truth benchmarking while enabling robust operation in crowd sourced datasets. 
+We have presented an efficient and effective joint solution to the view selection and depth estimation problem in multi-view stereo. Our solution relies on estimating a selection probability of each source image at the pixel level. The selection probability encodes the existence of contingency issues such as occlusions, specular aberrations and calibration errors. Moreover, by automatically determining reference image data associations with respect to a general source image dataset, we can encompass a larger range input imagery while increasing overall system robustness. Our approach has also extended the PatchMatch algorithm to encompass robust multi-view depth estimation within a probabilistic framework. Reported results achieve state-of-the-art accuracy in ground truth benchmarking while enabling robust operation in crowd-sourced datasets. 
 
 %Future research direction include integrating online normal estimation into our approach in order to reduce the reliance on existing sparse data to initialize our plane sweeping direction. We will explore the use of more sophisticated filtering mechanisms as the ones presented in \cite{Hosni12} in order to improve both computational efficiency and estimation accuracy.
 
