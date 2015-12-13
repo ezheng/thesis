@@ -69,9 +69,7 @@ Hence, the position of the dynamic 3D point $\oneX_{(p,f)}$ corresponding to $\m
 \oneX_{(p,f)} = \mathbf{C}_f + d_{(p,f)} \mathbf{r}_{(p,f)},
 \label{eq:X_representedBy_d}
 \end{equation}
-where % $\mathbf{C}_f$ is the camera center, $\mathbf{r}_{(f,p)}$ is the viewing directions, and
-$d_{(p,f)}$
-is the unknown distance of the 3D point from the camera center.
+where $d_{(p,f)}$ is the unknown distance of the 3D point from the camera center.
 
 Given $F$ frames with each frame observing $P$ dynamic 3D points, we denote our aggregated observed 3D datum as
 \begin{equation}
@@ -632,7 +630,7 @@ g_1		& \ddots & g_M	  	\\
 Each column of $G$ is a high-pass filter for the local region of a trajectory. From the formulation, it is required for all the shapes (columns of $\allX$) to be ordered temporally. 
 
 Comparing Equation (\ref{eq:valmadre_equ}) with Equation (\ref{eq:recon_original}), we can see the two equations are the same if $\mathbf{G}$ equals $\mathbf{I}-\allT$.
-In effect, the method by \cite{valmadre2012general} can be regarded as our method with a predefined $\allT$.
+In effect, the method by \cite{Valmadre_CVPR2012} can be regarded as our method with a predefined $\allT$.
 For instance,  if the high pass filter is set to $\mathbf{g}=[1,-1]$, it is equivalent (ignoring the difference at boundary) that $\allT$ is set to
 \begin{equation}
 \allT = \left[
@@ -787,8 +785,6 @@ We have tested the hard constraint formulation using noisy measurements, and the
 \textbf{Missing data.} %Missing observations occur in practice due to occlusion or mis-detection. 
 In our evaluation, we randomly set some 2D measures to be unavailable. Figure \ref{fig:error_occlusion} depicts the accuracy under different percentages of missing data. We observe that under 20\% of occlusion there is not much difference in reconstruction accuracy. Moreover, under a large amount of 40\% occlusion, our method still produces accurate results,  with 94.38\% of points having errors less than 30 mm. 
 
-Our method essentially linearly interpolates the 3D points along the trajectory using estimated  $\allT$. It can still produce 3D estimates in the presence of consecutive missing observations across time, but the accuracy in such scenarios depends on the object motion. Particularly, given large displacement of nonlinear motion, our method is likely to produce less accurate results.
-
 \begin{figure*}
 \centering
   \begin{minipage}[c]{0.8\linewidth}
@@ -818,6 +814,8 @@ Our method essentially linearly interpolates the 3D points along the trajectory 
 \caption[Reconstruction errors given missing data.]{The reconstruction accuracy under different percentages of occluded points.}
 \label{fig:error_occlusion}
 \end{figure*}
+
+Our method essentially linearly interpolates the 3D points along the trajectory using estimated  $\allT$. It can still produce 3D estimates in the presence of consecutive missing observations across time, but the accuracy in such scenarios depends on the object motion. Particularly, given large displacement of nonlinear motion, our method is likely to produce less accurate results.
 
 %and use the same evaluation criterion as described in Sec.~\ref{sec:experiment_accuracy}. 
 %Figs.~\ref{fig:hard_constraint_noise} and \ref{fig:soft_constraint_noise} show the errors of our method using hard and soft constraint for the parameterization of $\allX$. 
@@ -859,12 +857,6 @@ where $\mathbf{X}_{(p,f)} = (X_{(p,f)},Y_{(p,f)},Z_{(p,f)})$, the shape of the o
 \end{equation}
 where $||\cdot||_*$ is the matrix nuclear norm, $\mu$ is a positive weight, and $\mathcal{L}$ is a linear operator that reshapes $\allX$ into $\allX^\#$. 
 
-This formulation seems attractive at first glance due to its convexity, in contrast to our non-convex formulation. Moreover, their method is shape-based (instead of trajectory-based), and does not require temporal information. 
-To test the NRSFM method, We use synthetic data without noise and the random camera configuration shown in Figure \ref{fig:randCam}.
-Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative_result} show that it completely fails, as opposed to our method shown in Figure \ref{fig:ourmethod_Qualitative_result}. 
-
-%The NRSFM method is closely related to our proposed solution. Their method assumes all the shapes can be represented by a linear combination of shape bases, while ours use self-representation. In the typical NRSFM, 
-
 \begin{figure}
 \centering
 \subfloat[Our method accurately reconstructs the 3D points ($1/\sigma_{\text{min}}=7.589$, $err = 0.0825$).]{
@@ -898,6 +890,11 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 {Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. $err$ is the average Euclidean error per point.}
 \end{figure}
 
+This formulation seems attractive at first glance due to its convexity, in contrast to our non-convex formulation. Moreover, their method is shape-based (instead of trajectory-based), and does not require temporal information. 
+To test the NRSFM method, We use synthetic data without noise and the random camera configuration shown in Figure \ref{fig:randCam}.
+Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative_result} show that it completely fails, as opposed to our method shown in Figure \ref{fig:ourmethod_Qualitative_result}. 
+
+
 \textbf{Trajectory Triangulation Method.} We also compare with the trajectory triangulation method by  \citet{Valmadre_CVPR2012}, as is described in Section \ref{sec:importance_of_image_sequencing}. 
 Since the required sequencing information is readily available within each video stream, our test uses the simulation of one handheld camera as shown in Figure \ref{fig:oneCam}. The camera centers are Gaussian with 20 mm standard deviation ($\sigma_c$) around a fixed point. %The larger the standard deviation, the better the reconstructability. 
 Based on the theory in Section \ref{sec:system_condition}, the reconstructability increases with larger $\sigma_c$.
@@ -913,11 +910,11 @@ Figure \ref{fig:trajectory_Qualitative_result} shows the large system condition 
 \begin{figure*}
 \centering
 \subfloat[Rothman dataset (250 frames)]{
-\includegraphics[width=0.94\textwidth]{chapter5/resource/2_pdfsam_image_cropped.pdf} 
+\includegraphics[width=0.92\textwidth]{chapter5/resource/2_pdfsam_image_cropped.pdf} 
 }
 
 \subfloat[Juggler dataset (180 frames)]{
-\includegraphics[width=0.94\textwidth]{chapter5/resource/1_pdfsam_image_cropped.pdf}
+\includegraphics[width=0.92\textwidth]{chapter5/resource/1_pdfsam_image_cropped.pdf}
 }
 \caption[Example output of two real datasets.]{The datasets presented in \cite{ballan2010unstructured}. The frame rate of each camera is 12.5 Hz. For each dataset, the top left two show the camera configuration, the top right describes the temporal distribution of each image sequence (a colored grid means the camera of the same color captures one frame at a time instance), and the bottom shows sample reconstruction results. }
 \label{fig:onlinedata}
