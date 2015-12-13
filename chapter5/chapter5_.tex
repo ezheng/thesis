@@ -857,48 +857,47 @@ where $\mathbf{X}_{(p,f)} = (X_{(p,f)},Y_{(p,f)},Z_{(p,f)})$, the shape of the o
 \end{equation}
 where $||\cdot||_*$ is the matrix nuclear norm, $\mu$ is a positive weight, and $\mathcal{L}$ is a linear operator that reshapes $\allX$ into $\allX^\#$. 
 
-\begin{figure}
-\centering
-\subfloat[Our method accurately reconstructs the 3D points ($1/\sigma_{\text{min}}=7.589$, $err = 0.0825$).]{
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0001.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0033.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0055.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0069.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0079.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0091.pdf}
-\label{fig:ourmethod_Qualitative_result}
-}\\
-\subfloat[The modified prior-free method \cite{dai2014simple} fails to produce reasonable results. ($err = 472.9033$)]{
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0001.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0033.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0055.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0069.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0079.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0091.pdf}
-\label{fig:prior_free_Qualitative_result}
-}\\
-\subfloat[General trajectory prior method \cite{Valmadre_CVPR2012} produces large errors due to high system condition ($1/\sigma_{\text{min}}=2228$, $err = 76.9700$).]{
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0001.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0033.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0055.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0069.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0079.pdf}
-\includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0091.pdf}
-\label{fig:trajectory_Qualitative_result}
-}
-\caption[Comparision against two existing dynamic object reconstruction methods.]
-{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. $err$ is the average Euclidean error per point.}
-\end{figure}
-
 This formulation seems attractive at first glance due to its convexity, in contrast to our non-convex formulation. Moreover, their method is shape-based (instead of trajectory-based), and does not require temporal information. 
 To test the NRSFM method, We use synthetic data without noise and the random camera configuration shown in Figure \ref{fig:randCam}.
 Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative_result} show that it completely fails, as opposed to our method shown in Figure \ref{fig:ourmethod_Qualitative_result}. 
-
 
 \textbf{Trajectory Triangulation Method.} We also compare with the trajectory triangulation method by  \citet{Valmadre_CVPR2012}, as is described in Section \ref{sec:importance_of_image_sequencing}. 
 Since the required sequencing information is readily available within each video stream, our test uses the simulation of one handheld camera as shown in Figure \ref{fig:oneCam}. The camera centers are Gaussian with 20 mm standard deviation ($\sigma_c$) around a fixed point. %The larger the standard deviation, the better the reconstructability. 
 Based on the theory in Section \ref{sec:system_condition}, the reconstructability increases with larger $\sigma_c$.
 Considering that the framerate of the motion capture dataset is 120 Hz, the camera motion with  $\sigma_c = 20$mm is already very large compared to real handheld captures.
+
+\begin{figure}
+\centering
+\subfloat[Our method accurately reconstructs the 3D points ($1/\sigma_{\text{min}}=7.589$, $err = 0.0825$).]{
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0001.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0033.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0055.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0069.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0079.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0091.pdf}
+\label{fig:ourmethod_Qualitative_result}
+}\\
+\subfloat[The modified prior-free method \cite{dai2014simple} fails to produce reasonable results. ($err = 472.9033$)]{
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0001.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0033.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0055.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0069.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0079.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0091.pdf}
+\label{fig:prior_free_Qualitative_result}
+}\\
+\subfloat[General trajectory prior method \cite{Valmadre_CVPR2012} produces large errors due to high system condition ($1/\sigma_{\text{min}}=2228$, $err = 76.9700$).]{
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0001.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0033.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0055.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0069.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0079.pdf}
+\includegraphics[width=0.157\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0091.pdf}
+\label{fig:trajectory_Qualitative_result}
+}
+\caption[Comparision against two existing dynamic object reconstruction methods.]
+{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. $err$ is the average Euclidean error per point.}
+\end{figure}
 
 The method triangulates the trajectory of each dynamic point independently, and 
 each trajectory has one system condition given the viewing ray directions. 
