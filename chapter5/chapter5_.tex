@@ -13,7 +13,7 @@ Dynamic object reconstruction from unsynchronized videos is a challenging proble
 \begin{figure*}
 \centering
 \includegraphics[width=1\textwidth]{chapter5/resource/overview_1_cropped.pdf}
-\caption{\label{fig:overview} left: Multiple videos capture a performance.
+\caption[Illustration of the input for sparse reconstruction from unsynchronized videos.]{\label{fig:overview} left: Multiple videos capture a performance.
 The corresponding set of independent image streams  serves as input to our method.
 Right: each input video has a different sampling of a 3D point's trajectory.}
 \end{figure*}
@@ -30,7 +30,7 @@ Based on this self-expressive representation, our solution leverages the compres
 \begin{figure}
 \centering
 \includegraphics[width=0.75\textwidth]{chapter5/resource/first_image_cropped.pdf}
-\caption{\label{fig:first_image}(left) Example frame from the multiple videos capturing a performance serving as input to our method, with overlaid structure (points), and (right three) different views of the reconstructed 3D points. Note our method only estimates the 3D points but no topology. The skeleton lines are plotted  for visualization purposes.}
+\caption[Example output of the reconstructed 3D points.]{\label{fig:first_image}(left image) Example frame from the multiple videos capturing a performance serving as input to our method, with overlaid structure (points), and (right three images) different views of the reconstructed 3D points. Note our method only estimates the 3D points but no topology. The skeleton lines are plotted  for visualization purposes.}
 \end{figure} 
 
 The remainder of the work is organized as follows.
@@ -192,7 +192,7 @@ By construction, $\allT$ has all its diagonal elements equal to zero.
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.95\textwidth]{chapter5/resource/l1.pdf}\\
-  \caption{We illustrate the output of Equation (\ref{eq:l1_given3D}) on a real motion capture dataset ``Clap1Rep". 
+  \caption[Illustration of the self-expressive prior.]{We illustrate the output of Equation (\ref{eq:l1_given3D}) on a real motion capture dataset ``Clap1Rep". 
 For easy visualization, the shortest motion capture dataset (45 frames) presented in the work by \citet{cg-2007-2} is used. Each element/column in $\allX$  corresponds to  ground truth 3D structure. The estimation of $\allT$ through Equation (\ref{eq:l1_given3D}) approximates the correct ordering after enforcing all elements in the diagonal to be $0$.}
   \label{fig:principle}
 \end{figure}
@@ -239,7 +239,7 @@ The first cost term in Equation (\ref{eq:ourproblem_final}) serves to find shape
 In our solution, we explicitly enforce that the shape observed by one video is not used to represent the shape observed in the same video, because 
 the reconstructibility analysis in Section \ref{sec:system_condition} shows such estimation is ill-posed. In our implementation, enforcing this constraint is achieved by not defining the corresponding variables in $\allT$ during the optimization.
 
-\subsection{Coefficient Relationships: $\Psi_1(\allT)$}
+\subsection{Coefficient Relationships: \texorpdfstring{$\Psi_1(\allT)$}{psiallT}}
 As described in Section \ref{sec:principle}, a given structure $\shape_f$ in frame $f$ can be obtained from the linear combination of the 3D shapes captured in other frames. The coefficients or weights of the linear combination are given by the elements of the matrix $\allT$. In particular, the element in the $j$-th row and $f$-th column  of $\allT$ is denoted as $w_{(j,f)}$, and it describes the relative contribution (weight) from $\shape_{j}$ in estimating $\shape_{f}$.
 Similarly, $w_{(f,j)}$ represents the contribution of $\shape_{f}$ towards the 3D points in $\shape_{j}$.
 Accordingly, a value of $w_{(f,j)}=0$ indicates the absence of any contribution from $\shape_{f}$ to $\shape_{j}$, which is desired for tempo-spatially non-proximal 3D shapes.
@@ -260,7 +260,7 @@ as the values of $w_{(f,j)}$ and  $w_{(j,f)}$ depend on the actual 3D motion bei
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.75\columnwidth]{chapter5/resource/TripletFig.pdf}\\
-  \caption{Illustration of the triplets influencing the weights for $\shape_f$ and $\shape_j$ leading to an asymmetric $\allT$. The values in the figure represent the distance between adjacent points.}
+  \caption[Illustration of the relationship between shape weights.]{Illustration of the triplets influencing the weights for $\shape_f$ and $\shape_j$ leading to an asymmetric $\allT$. The values in the figure represent the distance between adjacent points.}
   \label{fig:Triplet}
 \end{figure}
 More specifically, these values describe the linear structural  dependencies between two different, but overlapping, 3-tuples of 3D points, e.g. ($\shape_{i}$,$\shape_{f}$,$\shape_{j}$) and ($\shape_{f}$,$\shape_{j}$,$\shape_{k}$) as illustrated in Figure \ref{fig:Triplet}. In the toy example of Figure \ref{fig:Triplet}, it can be seen that $\shape_{i}$ and $\shape_{j}$ are at equal distance to $\shape_{f}$ and hence equally contribute to it, i.e. $w_{(i,f)} = w_{(j,f)}=\frac{1}{2}$. However, in order to determine the linear combination weights for specifying $\shape_j$, we need to consider $\shape_f$ and $\shape_k$. Here, $\shape_f$ is twice as far from $\shape_j$ as $\shape_k$, and thus $w_{(f,j)}=\frac{1}{3}$, which is lower than $w_{(j,f)}$.
@@ -268,7 +268,7 @@ Accordingly, we do not expect a fully symmetric weight matrix   $\allT$. However
 Moreover, $\Psi_1(\allT)$  is convex, which enables its use within our biconvex optimization framework.
 %But notice that  depending on the object motion, the amount of contributions can be different.
 
-\subsection{Sequencing Information:$\Psi_2(\allX)$}
+\subsection{Sequencing Information: \texorpdfstring{$\Psi_2(\allX)$}{psiallX} }
 
 Under the assumption of sufficiently smooth 3D motion w.r.t.~the frame-rate of each video capture, we define a 3D spatial smoothness term that penalizes large displacements among successive frames from the same video.
 Therefore, we define a pairwise term over the values of $\allX$
@@ -288,7 +288,7 @@ Therefore, we propose to first minimize Equation (\ref{eq:ourproblem_final}) unt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Parameterization of $\allX$} \label{sec:parameterization}
+\section{Parameterization of \texorpdfstring{$\allX$}{paramallX}} \label{sec:parameterization}
 
 Given accurate 2D measurements, 
 the 3D structures $\allX$ are constrained to lie on the viewing rays defined by the 2D measures and camera poses. Therefore, we can use Equation (\ref{eq:X_representedBy_d_all}) to represent $\allX$. This is deemed as a hard constraint, as the points have to lie on the viewing ray. However, in practice, the measures are typically noisy or unavailable due to, for example, inaccurate feature detection or motion blur. 
@@ -330,7 +330,7 @@ We find that optimizing over $\allT$ with a general solver, such as CVX \cite{cv
 Moreover, during our iterative optimization, the output of the previous step can be fed into the current step for better initializaiton (hot start), but typical general solvers, such as those based on interior point algorithm, do not allow for a hot start.
 To solve the problem with speed and scalability, we propose a new solver based on alternating direction method of multipliers (ADMM) \cite{boyd2011distributed}.
 
-\subsection{Optimize Over $\allX$} \label{sec:optimize_over_x}
+\subsection{Optimize Over \texorpdfstring{$\allX$}{optimizeoverallX}} \label{sec:optimize_over_x}
 If $\allT$ in Equation (\ref{eq:ourproblem_final}) is fixed, the optimization over $\allX$ is straightforward, as the problem is quadratic programming without any constraint, regardless of the difficulties discussed in Section \ref{sec:parameterization}.
 \begin{enumerate}%[topsep=-1ex,itemsep=-1ex,partopsep=1ex,parsep=1ex]
 \item {If the data are noise-free,
@@ -348,7 +348,7 @@ d_{(p,f)}=(\oneX_{(p,f)}-\mathbf{C}_{f})^\text{T}\mathbf{r}_{(p,f)},
 \end{enumerate}
 For the quadratic programming without constraints, the solution can be found at the zero value of the derivative of the cost function over the unknown variables.
 
-\subsection{Optimize Over $\allT$} \label{sec:initlization}
+\subsection{Optimize Over \texorpdfstring{$\allT$}{optimizeoverallT}} \label{sec:initlization}
 The optimization over $\allT$ is more complex mainly due to the simplex constraints.
 By fixing the variable $\allX$ in Equation (\ref{eq:ourproblem_final}), the cost function becomes,
 \begin{equation}
@@ -424,7 +424,7 @@ Finally, we determine the minimum element of each $f$-th row in our distance mat
 \begin{figure}
 \centering
 \includegraphics[width=0.70\textwidth]{chapter5/resource/wrong_init.pdf}
-\caption{Example of incorrect initialization. The dataset `hopBothLegs3hops' \cite{cg-2007-2} has the motion of hopping forward three times. The black and blue shapes (almost overlapped) are the incorrect initialization of the real shapes (shown in green and red) of frames 16 and 89 due to the accidental ray intersections. This typically happens in the case of  periodic motion such as walking or jogging. In the figure, only one set of nearly intersecting rays is plotted.}
+\caption[Example of incorrect initialization.]{Example of incorrect initialization. The dataset `hopBothLegs3hops' \cite{cg-2007-2} has the motion of hopping forward three times. The black and blue shapes (almost overlapped) are the incorrect initialization of the real shapes (shown in green and red) of frames 16 and 89 due to the accidental ray intersections. This typically happens in the case of  periodic motion such as walking or jogging. In the figure, only one set of nearly intersecting rays is plotted.}
 \label{fig:init}
 \end{figure}
 
@@ -515,7 +515,7 @@ In our case, in order to achieve high reconstructability, $||\mathbf{A}^{-1}||_2
 
 
 \subsection{System Condition} \label{sec:system_condition}
-\begin{figure*}[]
+\begin{figure*}
 \centering
 \subfloat[]{
 \includegraphics[width=0.86\textwidth]{chapter5/resource/one_cam.png}
@@ -529,7 +529,7 @@ In our case, in order to achieve high reconstructability, $||\mathbf{A}^{-1}||_2
 \includegraphics[width=0.86\textwidth]{chapter5/resource/random_cam.png}
 \label{fig:randCam}
 }\\
-\caption{Simulated camera setups. The blue curve is a trajectory of a 3D point obtained from real motion capture data. Figures \ref{fig:oneCam} and \ref{fig:multiCam} show the slow-moving handheld cameras at three time instances. Figure \ref{fig:randCam} depicts a scenario where each camera only captures one image.
+\caption[Illustration of three camera setups.]{Simulated camera setups. The blue curve is a trajectory of a 3D point obtained from real motion capture data. Figures \ref{fig:oneCam} and \ref{fig:multiCam} show the slow-moving handheld cameras at three time instances. Figure \ref{fig:randCam} depicts a scenario where each camera only captures one image.
 Figure \ref{fig:multiCam} and Figure \ref{fig:randCam} show the camera setups of our method and of the method by \citet{zheng2014joint}, respectively. Coordinates are in millimeters (mm).
 }
 \label{fig:condition}
@@ -574,7 +574,7 @@ To illustrate that the shape observed by one video should not be used to represe
 \includegraphics[width=0.43\linewidth]{chapter5/resource/cn.pdf}
 \label{fig:frameDist_cond}
 }
-\caption{The reconstructability of the system is lower if the period of single-camera capture is longer.}
+\caption[System condition given different number of consecutive captures from one camera.]{The reconstructability of the system is lower if the period of single-camera capture is longer.}
 \end{figure}
 
 In our experiment, we observe the reconstructability is closely related to the camera motion and the object motion. 
@@ -590,7 +590,7 @@ While $\mathbf{A}$ depends on the viewing ray directions, which are available be
 \begin{figure}
 \centering
 \includegraphics[width=0.80\textwidth]{chapter5/resource/residual.pdf}
-\caption{Average residual $res$ (over 130 motion capture datasets present in \cite{cg-2007-2}) at different camera frame rates.}
+\caption[Average residual at differernt camera frame rates.]{Average residual $res$ (over 130 motion capture datasets present in \cite{cg-2007-2}) at different camera frame rates.}
 \label{fig:residual}
 \end{figure}
 
@@ -709,14 +709,14 @@ We define the accuracy by counting the percentage of points having errors less t
 	\hline	
   \end{tabular}
 \end{minipage}
-\caption{The reconstruction accuracy given different camera frame rates. We also test the case that the captures of object motion are randomly assigned to any of the image sequences without any constraint. 30 Hz$^*$ in the figure represents the unconstrained assignment.}
+\caption[Reconstruction errors without measurement noise.]{The reconstruction accuracy given different camera frame rates. We also test the case that the captures of object motion are randomly assigned to any of the image sequences without any constraint. 30 Hz$^*$ in the figure represents the unconstrained assignment.}
 \label{fig:error_framerate}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=0.65\textwidth]{chapter5/resource/unconstrained_assignment_cropped.pdf}
-\caption{Consecutive captures are assigned to the same red camera. For easy visualizations, only one point per shape is drawn.}
+\caption[Illustration of consecutive captures assigned to the same camera.]{Consecutive captures are assigned to the same red camera. For easy visualizations, only one point per shape is drawn.}
 \label{fig:unconstrained_assign}
 \end{figure}
 
@@ -762,13 +762,13 @@ We test the case that each capture is randomly assigned to one of the four camer
 	\hline	
 \end{tabular}
 \end{minipage}
-\caption{The reconstruction accuracy when the 2D observations are corrupted with Gaussian noise of different standard deviation ($\sigma$).}
+\caption[Reconstruction errors given noisy measurements.]{The reconstruction accuracy when the 2D observations are corrupted with Gaussian noise of different standard deviation ($\sigma$).}
 \label{fig:error_noise}
 \end{figure*}
 \begin{figure}
 \centering
 \includegraphics[width=0.75\textwidth]{chapter5/resource/different_lambda.pdf}
-\caption{The difference of the estimated results by the hard constraint formulation in Equation (\ref{eq:X_representedBy_d_all}) and the soft constraint formulation in Equation (\ref{eq:soft_constraint}) with different $\lambda_3$} 
+\caption[Different between the hard constraint and the soft constraint parameterizations.]{The difference of the estimated results by the hard constraint formulation in Equation (\ref{eq:X_representedBy_d_all}) and the soft constraint formulation in Equation (\ref{eq:soft_constraint}) with different $\lambda_3$} 
 \label{fig:soft_hard_diff}
 \end{figure}
 
@@ -812,7 +812,7 @@ Our method essentially linearly interpolates the 3D points along the trajectory 
 	\hline
 \end{tabular}
 \end{minipage}
-\caption{The reconstruction accuracy under different percentages of occluded points.}
+\caption[Reconstruction errors given missing data.]{The reconstruction accuracy under different percentages of occluded points.}
 \label{fig:error_occlusion}
 \end{figure*}
 
@@ -891,7 +891,7 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0091.pdf}
 \label{fig:trajectory_Qualitative_result}
 }
-\caption{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. The average error per point for the three methods are (a) 0.0825, (b) 472.9033, and (c) 76.9700.}
+\caption[Comparision against two existing dynamic object reconstruction methods.]{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. The average error per point for the three methods are (a) 0.0825, (b) 472.9033, and (c) 76.9700.}
 \end{figure}
 
 \textbf{Trajectory Triangulation Method.} We also compare with the trajectory triangulation method by  \citet{Valmadre_CVPR2012}, as is described in Section \ref{sec:importance_of_image_sequencing}. 
@@ -915,14 +915,14 @@ Figure \ref{fig:trajectory_Qualitative_result} shows the large system condition 
 \subfloat[Juggler dataset (180 frames)]{
 \includegraphics[width=0.94\textwidth]{chapter5/resource/1_pdfsam_image_cropped.pdf}
 }
-\caption{The datasets presented in \cite{ballan2010unstructured}. The frame rate of each camera is 12.5 Hz. For each dataset, the top left two show the camera configuration, the top right describes the temporal distribution of each image sequence (a colored grid means the camera of the same color captures one frame at a time instance), and the bottom shows sample reconstruction results. }
+\caption[Example output of two real datasets.]{The datasets presented in \cite{ballan2010unstructured}. The frame rate of each camera is 12.5 Hz. For each dataset, the top left two show the camera configuration, the top right describes the temporal distribution of each image sequence (a colored grid means the camera of the same color captures one frame at a time instance), and the bottom shows sample reconstruction results. }
 \label{fig:onlinedata}
 \end{figure*}
 
 \begin{figure*}
 \centering
 \includegraphics[width=0.92\textwidth]{chapter5/resource/3_pdfsam_image_cropped.pdf}
-\caption{Results of a person juggling. Note we reconstruct the four juggler balls in addition to the person. The image sequence from iPhone6 and iPhone5 have frame rates of 10 Hz and 6.25 Hz respectively}
+\caption[Example output of one real dataset.]{Results of a person juggling. Note we reconstruct the four juggler balls in addition to the person. The image sequence from iPhone6 and iPhone5 have frame rates of 10 Hz and 6.25 Hz respectively}
 \label{fig:juggler2}
 \end{figure*}
 For experiments on real image capture, we use the Juggler and Rothman datasets from \cite{ballan2010unstructured}. Given that the original datasets were synchronized, we sample the video frames to avoid concurrent captures (see Figure \ref{fig:onlinedata}). 

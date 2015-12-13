@@ -5,7 +5,7 @@
 \begin{figure*}
 \centering
     \includegraphics[width=1\columnwidth]{chapter3/resource/combine.pdf}
-    \caption{Overview of our  approach. Input imagery is used to jointly estimate a depthmap and pixel level view associations. Blue regions in the view selection probability map indicate pixels in the reference image lacking reliable observations in the corresponding source image.}
+    \caption[Overview of joint view selection and depthmap estimation.]{Overview of our  approach. Input imagery is used to jointly estimate a depthmap and pixel level view associations. Blue regions in the view selection probability map indicate pixels in the reference image lacking reliable observations in the corresponding source image.}
 \label{fig:selectionExample}
 \end{figure*}
 
@@ -54,7 +54,7 @@ In the absence of proper depth hypotheses, we additionally draw and test $H$ ran
 %\subfloat{
 \includegraphics[width=0.99\textwidth]{chapter3/resource/prop_cropped.pdf}
 %}
-\caption{The black and blue arrows show the propagation directions and the sampling schemes. Left: Top left to bottom right propagation in \cite{patchMatchStereo1}. Middle: Rightward propagations in \cite{patchMatchParallel}. Right: Our rightward propagation.}
+\caption[Illustration of three differernt PatchMatch propagation schemes.]{The black and blue arrows show the propagation directions and the sampling schemes. Left: Top left to bottom right propagation in \cite{patchMatchStereo1}. Middle: Rightward propagations in \cite{patchMatchParallel}. Right: Our rightward propagation.}
 \label{fig:propagation}
 \end{figure}
 
@@ -67,7 +67,7 @@ Therefore, depth estimation for a given pixel entails the determination of which
 \begin{figure}
 \centering
 \includegraphics[width=0.6\textwidth]{chapter3/resource/figure_obmodel_cropped.pdf}
-\caption{Distribution of Equation (\ref{equ:observationModel})}
+\caption[Distribution of the likelihood function.]{Distribution of Equation (\ref{equ:observationModel})}
 \label{fig:obModelDistribution}
 \end{figure}
 
@@ -95,7 +95,7 @@ Setting $\gamma$ close to 1 encourages  neighboring  pixels to have similar sele
 \begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{chapter3/resource/graphicalModel_cropped.pdf}
-\caption{The graphical model. $\theta_l$ is the depth of pixel $l$. $Z_l^m$ is the selection of image $m$ at pixel $l$. $X_l^m$ is the observation (colors) on the source image $m$ given depth $\theta_l$.}
+\caption[Graphical model of joint view selection and depthmap estimation.]{The graphical model. $\theta_l$ is the depth of pixel $l$. $Z_l^m$ is the selection of image $m$ at pixel $l$. $X_l^m$ is the observation (colors) on the source image $m$ given depth $\theta_l$.}
 \label{fig:model}
 \end{figure}
 
@@ -197,7 +197,7 @@ The computation of $\theta_l^*$ requires $q(Z_l^m)$ to be known (Equation (\ref{
 \begin{figure}
 \centering
     \includegraphics[height=0.42\columnwidth]{chapter3/resource/combine_upschedule.pdf}
-\caption{Update schedule. See text for more details.}
+\caption[Illustration of the update scheme for the depth and the image selection probability.]{Update schedule. See text for more details.}
 \label{fig:updateSchedule}
 \end{figure}
 
@@ -231,7 +231,7 @@ In step 3, with $\theta_l^{new}$, we recompute forward message $\alpha(Z_l)$, wh
 
 \subsection{Algorithm Integration}  \label{sec:algorithm}
 %In this subsection, we detail the algorithm given the above formula.
-\begin{table}[]
+\begin{table}
     \small
     \centering
     \begin{tabular}{|l|c|c|}
@@ -254,7 +254,7 @@ In step 3, with $\theta_l^{new}$, we recompute forward message $\alpha(Z_l)$, wh
                   \hspace{10 mm} Recompute forward message $\alpha_l^m$ & (\ref{equ:forwardMessageUpdate}) & 3\\
         \hline
     \end{tabular}
-\caption{The algorithm of a row/column propagation.}
+\caption[Algorithm of a row/column propagation for joint view selection and depth estimation.]{The algorithm of a row/column propagation.}
 \label{table:algorithm}
 \end{table}
 
@@ -286,7 +286,7 @@ In both evaluation scenarios we juxtapose our results with current state-of-the-
 We implemented our method in CUDA and executed on a Nvidia GTX-Titan GPU.
 For all experiments, the total number multi-directional propagations is set to 3 and we use  $\sigma = 0.45$ in the likelihood function (Equation (\ref{equ:observationModel})) and $\gamma=0.999$ in the transition probabilities (Equation (\ref{equ:transitionProb})).  %refering to Eqs. \ref{equ:observationModel} and  \ref{equ:transitionProb}, respectively.
 
-\begin{table}[t]
+\begin{table}
 \centering
     \begin{tabular}{|c|c|c|c|c|}
     \hline
@@ -310,7 +310,7 @@ For all experiments, the total number multi-directional propagations is set to 3
     JAN \cite{JAN} &0.824 & 0.973 & 0.739 & 0.923\\
     \hline
     \end{tabular}
-\caption{The percentage of pixels with absolute error less than 2cm and 10cm. Entries {\em Ours(P)}  and {\em Ours}  denote our results with and without postprocessing.  Reported values are from the work by \citet{LeastCommitment_3DIMPVT2012}.}
+\caption[Percentage of pixels with absolute error less than 2cm and 10cm.]{The percentage of pixels with absolute error less than 2cm and 10cm. Entries {\em Ours(P)}  and {\em Ours}  denote our results with and without postprocessing.  Reported values are from the work by \citet{LeastCommitment_3DIMPVT2012}.}
 \label{tab:data}
 \end{table}
 
@@ -339,16 +339,16 @@ Table \ref{tab:data} shows our method is comparable to the state-of-the-art meth
 \begin{figure}
 \centering
 \subfloat{
-    \includegraphics[width=1\columnwidth]{chapter3/resource/subregionCombine.pdf}
+    \includegraphics[width=0.96\columnwidth]{chapter3/resource/subregionCombine.pdf}
 }
-\caption{Left: Comparison against best-K aggregation. Right: Raw depthmap output of a partially occluded subregion with results for different dataset-aggregation combinations.}
+\caption[Comparison against the best-K planesweeping method in accuracy given different $K$.]{Left: Comparison against best-K aggregation. Right: Raw depthmap output of a partially occluded subregion with results for different dataset-aggregation combinations.}
 \label{fig:bestK}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=0.7\linewidth]{chapter3/resource/planesweepTiming.pdf}
-\caption{Fountain dataset performance. Left: Average running time. Right: Percentage of pixels given different thresholds.  PLA is the planesweep algorithm with all source images and K=3, while GOS is the method by \citet{Goesele07}.}
+\caption[Comparison against the best-K planesweeping method in accuracy and run time given different number of planes.]{Fountain dataset performance. Left: Average running time. Right: Percentage of pixels given different thresholds.  PLA is the planesweep algorithm with all source images and K=3, while GOS is the method by \citet{Goesele07}.}
 \label{fig:timing}
 \end{figure}
 
@@ -379,7 +379,7 @@ Figure \ref{fig:alexander} depicts Alexander Nevsky Cathedral in Sofia having in
 \begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{chapter3/resource/alexander.pdf}
-\caption{\label{fig:alexander} Top: Front and back of Alexander Nevsky Cathedral and estimated 3D model. Bottom: original image, depthmap of our method and the method by \citet{Goesele07} with wrong and correct camera poses.
+\caption[Example depthmap output given outlier camera poses.]{\label{fig:alexander} Top: Front and back of Alexander Nevsky Cathedral and estimated 3D model. Bottom: original image, depthmap of our method and the method by \citet{Goesele07} with wrong and correct camera poses.
 }
 \end{figure}
 
@@ -387,7 +387,7 @@ Figure \ref{fig:alexander} depicts Alexander Nevsky Cathedral in Sofia having in
 \begin{figure*}
 \centering
 \includegraphics[width=1\linewidth]{chapter3/resource/allResultsCombine.pdf}
-\caption{Each image triplet  depicts a reference image along with our and Goesele's (\cite{Goesele07}) depthmap output (Best viewed in color).}
+\caption[Example depthmap output on Internet collected photos, and qualitive comparision againt the Goesele's method.]{Each image triplet  depicts a reference image along with our and Goesele's (\cite{Goesele07}) depthmap output (Best viewed in color).}
 \label{fig:ipc}
 \end{figure*}
 We tested our algorithm on  Internet photo collections (IPC)  downloaded from the Flickr  for six different scenes: Paris Triumphal Arch (195 images), Brandenburg Gate (300 images), Notre Dame de Paris (300 images), Great Buddha (212 images), Mt.~Rushmore (206 images) and Berlin Cathedral (500 images). In order to control GPU memory, we optionally resize imagery to no more than 1024 pixels for each dimension. Camera poses were calculated using VisualSFM \cite{WuVSFM}.
@@ -407,7 +407,7 @@ To quantitatively compare the accuracy of our results with the work by \citet{Go
 \centering
 \centering
 \includegraphics[width=0.60\linewidth]{chapter3/resource/compareGoesele.pdf}
-\caption{Fountain dataset performance.Percentage of pixels given different thresholds.  PLA is the planesweep algorithm with all source images and K=3, while GOS is the method by \citet{Goesele07}.}
+\caption[Comparison again the Goesele's method and the best-K planesweeping method on the fountain dataset.]{Fountain dataset performance.Percentage of pixels given different thresholds.  PLA is the planesweep algorithm with all source images and K=3, while GOS is the method by \citet{Goesele07}.}
 \label{fig:compareGoesele}
 \end{figure}
 
@@ -432,7 +432,7 @@ We have presented an efficient and effective joint solution to the view selectio
 
 %Using more images does not increase the computation time linearly. The computation relies on several factors. If most target images are not useful to recover the depth, then the number of images used for recover the depth for certain pixel will be significantly smaller than $N$. In this case the computation will be smaller, as some images will never be used to test depth of certain pixels. The computation of $S$ scales linearly with the number of images used.
 
-%\begin{figure}[t]
+%\begin{figure} 
 %\centering
 %    \includegraphics[height=0.6\columnwidth]{resource/bestK/bestK_error.pdf}
 %    \caption{The comparison of our method with best K method. }

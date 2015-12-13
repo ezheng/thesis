@@ -16,20 +16,20 @@ Moreover, each instance of the object is typically observed by only one image an
 
 To attain the object class trajectory, our method simultaneously determines the sequence of the objects along the 3D path and the 3D positions of the objects on the path. Accordingly, this can be deemed as a joint object class equencing and trajectory triangulation, which generalizes the well known sequencing problem \cite{Basha_ECCV2012,Basha_ICCV2013} and the trajectory triangulation problem \cite{Valmadre_CVPR2012,ZhuCL_CVPR11,Park_ECCV2010} into a common framework. We leverage all the observations on different images to recover the object class trajectory, which then gives us the 3D positions of the dynamic objects.
 
-\begin{figure}[t]
+\begin{figure}
 \centering
 \subfloat[]{
 \centering
-    \includegraphics[height=0.34\linewidth]{chapter4/resource/images_cropped.pdf}
+    \includegraphics[height=0.33\linewidth]{chapter4/resource/images_cropped.pdf}
     \label{fig:franklin_imgs}
      \label{fig:franklin_sfm}
     }
 \subfloat[]{
 \centering
-    \includegraphics[height=0.34\linewidth]{chapter4/resource/3DModel.png}
+    \includegraphics[height=0.33\linewidth]{chapter4/resource/3DModel.png}
     \label{fig:FranklinSingleViewRecon}
     }
-\caption{Left: 3 images of the pedestrian dataset and the output of SFM. Right: The reconstruction of two pedestrians that are captured in the single image. Note we only reconstruction one 3D position for each dynamic object instance. For visualization purposes, a general mesh model is inserted into each estimated position.}
+\caption[Example input and output of JOST.]{Left: 3 images of the pedestrian dataset and the output of SFM. Right: The reconstruction of two pedestrians that are captured in the single image. Note we only reconstruction one 3D position for each dynamic object instance. For visualization purposes, a general mesh model is inserted into each estimated position.}
 %\end{subfigure}
 %\label{fig:gmst}
 \vspace*{-0.5cm}
@@ -122,7 +122,7 @@ Optimization of the non-convex function in Equation (\ref{equ:costFunc}) is inhe
 \begin{figure}[t]
 \centering
     \includegraphics[width=1\columnwidth]{chapter4/resource/gmst_eccv.pdf}
-\caption{Illustration of GMST. See the text for more details.}
+\caption[Illustration of the generalized minimum spanning tree (GMST)]{Illustration of GMST. See the text for more details.}
 %\end{subfigure}
 \label{fig:gmst}
 \end{figure}
@@ -172,7 +172,7 @@ Edge 1 and Edge 3 in Figure \ref{fig:node_DirectionB} have a relatively lower co
     \label{fig:node_edgeRemove}
 }
 
-\caption{In Figure \ref{fig:node_DirectionA}, the black nodes shows the real positions of dynamic objects. The red vector represents the direction associated with each object. In the shown example, $\mathbf{d}_{i,j}$ equals $\mathbf{d}_{i}$.  }
+\caption[Illustration of the motion tangent.]{In Figure \ref{fig:node_DirectionA}, the black nodes shows the real positions of dynamic objects. The red vector represents the direction associated with each object. In the shown example, $\mathbf{d}_{i,j}$ equals $\mathbf{d}_{i}$.  }
 %\end{subfigure}
 \label{fig:nodeDirection}
 \end{figure}
@@ -251,7 +251,7 @@ Equation (\ref{equ:A}) and Equation (\ref{equ:b}) have the following interesting
     \includegraphics[height=0.24\textheight]{chapter4/resource/analysis_2_cropped.pdf}
     \label{fig:b_lambdaBiggerthan0}
 }
-\caption{Plot of Equation (\ref{equ:b}) with $\lambda=0$ and $\lambda>0$.}
+\caption[Illustration of the reconstructability given different weight $\lambda$.]{Plot of Equation (\ref{equ:b}) with $\lambda=0$ and $\lambda>0$.}
 \label{fig:b}
 \end{figure}
 
@@ -263,7 +263,7 @@ Equation (\ref{equ:A}) and Equation (\ref{equ:b}) have the following interesting
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{chapter4/resource/conditionNum_lamda.pdf}
-\caption{$\kappa(\mathbf{A})$ given different $\lambda$.}
+\caption[Illustration of the system condition number given different weight $\lambda$.]{$\kappa(\mathbf{A})$ given different $\lambda$.}
 \label{fig:conditionNum_lamda}
 \end{figure}
 
@@ -305,7 +305,7 @@ The moving directions of the pedestrians and cars are estimated using the 3D poi
 \includegraphics[width=0.3\textwidth]{chapter4/resource/IMG_3365.png} &
 \includegraphics[width=0.3\textwidth]{chapter4/resource/IMG_3073-alldect.png}
 \end{tabular}
-\caption{Detected objects and estimated motion tangents using different detectors.}
+\caption[Example of the object detection output and the estimated motion tangent.]{Detected objects and estimated motion tangents using different detectors.}
 \label{fig:detection}
 \end{figure}
 
@@ -329,14 +329,14 @@ The GMST algorithm used in our method \cite{Ferreira_ESWA2012} searches the hypo
   $\text{error}^*_B$ & 0.0287 & 0.0944 & 0.7692 & 0.1074 & 0.2305 & 0.1308\\
   \hline
 \end{tabular}
-\caption{ The table shows the average errors. The subscript represents camera setup. The absence of an asterisk represents the GMST algorithm output, and the asterisk is the refined output of Equation (\ref{equ:costFunc_continuous}). Notice that for the ground truth 3D points, the average distance between every pair of nearest points equals 1. }
+\caption[Quantitative evaluation of JOST on synthetic data]{ The table shows the average errors. The subscript represents camera setup. The absence of an asterisk represents the GMST algorithm output, and the asterisk is the refined output of Equation (\ref{equ:costFunc_continuous}). Notice that for the ground truth 3D points, the average distance between every pair of nearest points equals 1. }
 \label{fig:syntheticDataResult}
 \end{table}
 
 \begin{figure}
 \centering
     \includegraphics[width=0.99\textwidth]{chapter4/resource/allfig_2.pdf}
-\caption{Example results for line path, T-junction path, half circle and crossed paths.}
+\caption[Example output of JOST on synthetic data]{Example results for line path, T-junction path, half circle and crossed paths.}
 \label{fig:synthetic}
 \end{figure}
 
@@ -359,7 +359,7 @@ Errors are measured using the Euclidean distance between the estimated 3D points
     \includegraphics[height=0.21\textheight]{chapter4/resource/tjunction1.PNG}
     \includegraphics[height=0.21\textheight]{chapter4/resource/tjunction2.PNG}
 }
-\caption{Two views for each of the reconstructed results.}
+\caption[Example reconstruction results on two real datasets.]{Two views for each of the reconstructed results.}
 \label{fig:reconstructed}
 \end{figure}
 \textbf{Real datasets} We evaluate our method on two image datasets  registered by VisualSFM \cite{WuVSFM}. The detection confidence threshold  is set high in order to lower down the false alarm rate. However, a very small amount of false alarms are purged manually as it may affect the reconstruction.  We sample 100 samples along the viewing ray in the range $[0,far]$, where $far$ is  estimated using the model scale. The run time for each object class trajectory is set to 3 hours.
@@ -371,24 +371,24 @@ The second dataset captures several people who are walking on a T-junction shape
 \centering
 \begin{tabu}{ |[2pt]c |[2pt] c |[2pt]}
 \tabucline[2pt]{-}
-\includegraphics[width=0.33\textwidth]{chapter4/resource/googlescholar.PNG} &
-\includegraphics[width=0.33\textwidth]{chapter4/resource/car_ped_franklin_top.pdf}  \\
+\includegraphics[width=0.32\textwidth]{chapter4/resource/googlescholar.PNG} &
+\includegraphics[width=0.32\textwidth]{chapter4/resource/car_ped_franklin_top.pdf}  \\
 \tabucline[2pt]{-}
 \tabucline[2pt]{-}
-\includegraphics[width=0.33\textwidth]{chapter4/resource/cleanFrame083.jpg} & 
-\includegraphics[width=0.33\textwidth]{chapter4/resource/Frame_083_crop.jpg}  \\
+\includegraphics[width=0.32\textwidth]{chapter4/resource/cleanFrame083.jpg} & 
+\includegraphics[width=0.32\textwidth]{chapter4/resource/Frame_083_crop.jpg}  \\
 \tabucline[2pt]{-}
-\includegraphics[width=0.33\textwidth]{chapter4/resource/cleanFrame084.jpg} &
-\includegraphics[width=0.33\textwidth]{chapter4/resource/Frame_084_crop.jpg} \\
+\includegraphics[width=0.32\textwidth]{chapter4/resource/cleanFrame084.jpg} &
+\includegraphics[width=0.32\textwidth]{chapter4/resource/Frame_084_crop.jpg} \\
 \tabucline[2pt]{-}
-\includegraphics[width=0.33\textwidth]{chapter4/resource/cleanFrame085.jpg} & 
-\includegraphics[width=0.33\textwidth]{chapter4/resource/Frame_085_crop.jpg} \\
+\includegraphics[width=0.32\textwidth]{chapter4/resource/cleanFrame085.jpg} & 
+\includegraphics[width=0.32\textwidth]{chapter4/resource/Frame_085_crop.jpg} \\
 \tabucline[2pt]{-}
-\includegraphics[width=0.33\textwidth]{chapter4/resource/cleanFrame086.jpg} &
+\includegraphics[width=0.32\textwidth]{chapter4/resource/cleanFrame086.jpg} &
 \includegraphics[width=0.33\textwidth]{chapter4/resource/Frame_086_crop.jpg}\\
 \tabucline[2pt]{-}
 \end{tabu}
-\caption{The left row: an aerial image showing the scene and a figure showing the cameras and reconstructed cars and pedestrians. The bottom four rows: four pedestrian detections (shown in yellow rectangles) and the poses of the corresponding cameras. These four pedestrians are adjacent in the reconstructed object class trajectory. Notice that the second and the third images are the same image but with different detections.}
+\caption[Illustration of pedestrian reconstruction results.]{The left row: an aerial image showing the scene and a figure showing the cameras and reconstructed cars and pedestrians. The bottom four rows: four pedestrian detections (shown in yellow rectangles) and the poses of the corresponding cameras. These four pedestrians are adjacent in the reconstructed object class trajectory. Notice that the second and the third images are the same image but with different detections.}
 \label{fig:franklin_Recon}
 \end{figure}
 
