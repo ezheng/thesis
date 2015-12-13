@@ -6,7 +6,7 @@ Thanks to the rapid development of mobile technology, it has become common that 
 
 In this work, we target the problem of dynamic 3D object reconstruction from these unsynchronized videos. 
 More specifically, the method takes as input multiple video streams without inter-sequence temporal information. The video streams could potentially have different, irregular, and unknown frame rates (see Figure \ref{fig:overview}). 
-As output, the method reconstructs the 3D positions of sparse feature points at each time instance (e.g., Figure \ref{fig:first_image}). 
+As output, the method reconstructs the 3D positions of sparse feature points at each time instance (\emph{e.g}., Figure \ref{fig:first_image}). 
 Dynamic object reconstruction from unsynchronized videos is a challenging problem due to various factors, such as unknown temporal overlap among video streams, possible non-concurrent captures, and dynamic object motion. Any of these factors impedes the valid reconstruction from traditional 3D triangulation, which relies on the assumption of concurrent captures or a static scene.
 
 
@@ -43,9 +43,9 @@ Section \ref{sec:solver} describes our ADMM-based optimization solver to minimiz
 \section{Problem and Notations} \label{sec:problem_and_notations}
 
 We now describe the notations of our problem.
-Let $\{\mathcal I\}$ denote an aggregated set of images attained from $N$ video sequences $\{\mathcal V_n \}$.
-Assuming a total of $F$ available images, we can denote each individual image as $I_f \in \{\mathcal I\} $, where  $f=1,\dots,F$.
-Alternatively, we can refer to  the $m$-th frame in the $n$-th video as $I_{(n,m)} \in\{\mathcal V_n \}$, where $n=1,\dots,N$ and $m=1,\dots, \left\vert{\{\mathcal V_n \}}\right\vert$.
+Let $\mathcal I$ denote an aggregated set of images attained from $N$ video sequences $\mathcal V_n $, where $n=1,\dots,N$.
+Assuming a total of $F$ available images, we can denote each individual image as $I_f\in \mathcal{I}$, where  $f=1,\dots,F$.
+Alternatively, we can refer to  the $m$-th frame in the $n$-th video as $I_{(n,m)} \in \mathcal{V}_n$, where $n=1,\dots,N$ and $m=1,\dots, \left\vert{\mathcal{V}_n }\right\vert$.
 
 We assume an {\em a priori} camera registration  through structure-from-motion analysis of  static background structures within the environment~\cite{WuVSFM}.
 Accordingly, for each available image  $I_f$ we know the capturing camera's pose matrix
@@ -233,7 +233,7 @@ To achieve the stable estimation of both the structure $\allX$ and the sequencin
 \end{equation}
 where $\Psi_1(\allT)$ and  $\Psi_2(\allX)$ are two convex cost terms regulating the spatial relationships between 3D observations within and across video streams. We also add the normalization term $FP$ to cancel the influence of number of frames and number of points per shape. Next, we describe each of the cost terms in detail.
 
-\subsection{Dictionary Space Reduction in Self-representation}
+\subsection{Dictionary Space Reduction in Self-representation} \label{sec:dictionary_space_reduction}
 The first cost term in Equation (\ref{eq:ourproblem_final}) serves to find shapes in the dictionary to sparsely represent each shape. The search space can be reduced if some elements of $\allT$ are forced to be 0. As mentioned, the diagonal elements of $\allT$ are forced to be 0, since a shape is not used to represent itself. Moreover, it is possible that if {\em a priori} knowledge of rough temporal information across video steams is available, we can also leverage the knowledge to reduce the search space.
 
 In our solution, we explicitly enforce that the shape observed by one video is not used to represent the shape observed in the same video, because 
@@ -263,7 +263,7 @@ as the values of $w_{(f,j)}$ and  $w_{(j,f)}$ depend on the actual 3D motion bei
   \caption[Illustration of the relationship between shape weights.]{Illustration of the triplets influencing the weights for $\shape_f$ and $\shape_j$ leading to an asymmetric $\allT$. The values in the figure represent the distance between adjacent points.}
   \label{fig:Triplet}
 \end{figure}
-More specifically, these values describe the linear structural  dependencies between two different, but overlapping, 3-tuples of 3D points, e.g. ($\shape_{i}$,$\shape_{f}$,$\shape_{j}$) and ($\shape_{f}$,$\shape_{j}$,$\shape_{k}$) as illustrated in Figure \ref{fig:Triplet}. In the toy example of Figure \ref{fig:Triplet}, it can be seen that $\shape_{i}$ and $\shape_{j}$ are at equal distance to $\shape_{f}$ and hence equally contribute to it, i.e. $w_{(i,f)} = w_{(j,f)}=\frac{1}{2}$. However, in order to determine the linear combination weights for specifying $\shape_j$, we need to consider $\shape_f$ and $\shape_k$. Here, $\shape_f$ is twice as far from $\shape_j$ as $\shape_k$, and thus $w_{(f,j)}=\frac{1}{3}$, which is lower than $w_{(j,f)}$.
+More specifically, these values describe the linear structural  dependencies between two different, but overlapping, 3-tuples of 3D points, \emph{e.g}.~($\shape_{i}$,$\shape_{f}$,$\shape_{j}$) and ($\shape_{f}$,$\shape_{j}$,$\shape_{k}$) as illustrated in Figure \ref{fig:Triplet}. In the toy example of Figure \ref{fig:Triplet}, it can be seen that $\shape_{i}$ and $\shape_{j}$ are at equal distance to $\shape_{f}$ and hence equally contribute to it, \emph{i.e}.~$w_{(i,f)} = w_{(j,f)}=\frac{1}{2}$. However, in order to determine the linear combination weights for specifying $\shape_j$, we need to consider $\shape_f$ and $\shape_k$. Here, $\shape_f$ is twice as far from $\shape_j$ as $\shape_k$, and thus $w_{(f,j)}=\frac{1}{3}$, which is lower than $w_{(j,f)}$.
 Accordingly, we do not expect a fully symmetric weight matrix   $\allT$. However,  given our expectation of a sparse coefficient matrix $\allT$, we can focus on finding congruence between the zero-value elements of the $\allT$ and $\allT^\top$, which $\Psi_1(\allT)$ effectively encodes.
 Moreover, $\Psi_1(\allT)$  is convex, which enables its use within our biconvex optimization framework.
 %But notice that  depending on the object motion, the amount of contributions can be different.
@@ -295,7 +295,7 @@ the 3D structures $\allX$ are constrained to lie on the viewing rays defined by 
 Next, we discuss the parameterization of $\allX$ given noisy and missing 2D observations.
 
 \subsection{Noisy Observations} \label{sec:noisy_measure}
-The parameterization using Equation (\ref{eq:X_representedBy_d}) enforces the hard constraint that 3D points lie on the viewing rays.%, but with noisy measures the viewing ray directions are inaccurate. 
+The parameterization using Equation (\ref{eq:X_representedBy_d}) enforces the hard constraint that 3D points lie on the viewing rays. 
 Given that this may not be appropriate under the circumstance of noisy measurements, we can change this hard constraint to a soft constraint by adding a regularization term into the original Equation (\ref{eq:ourproblem_final}). Defining the objective function in Equation (\ref{eq:ourproblem_final}) as $\Phi(\allX,\allT)$, we propose a revised version as
 \begin{equation}
 \begin{aligned}
@@ -322,9 +322,8 @@ In our method, the 3D points with missing 2D observations are interpolated by th
 \section{Optimization}\label{sec:solver}
 
 The biconvex function in Equation (\ref{eq:ourproblem_final}) is non-convex, but it is convex if one set of the variables $\allX$ or $\allT$ is fixed.
-Though a  more complicated dictionary update scheme such as K-SVD \cite{aharon2006img} is possible,
-in this paper we use the simplest optimization scheme for Equation (\ref{eq:ourproblem_final}) that alternates the optimizations over $\allX$ and $\allT$.
-Since the alternating optimization steps need to be performed until convergence, each step must be reasonably fast.
+%Though a  more complicated dictionary update scheme such as K-SVD \cite{aharon2006img} is possible,
+The optimization scheme employed for Eq.~(\ref{eq:ourproblem_final}) alternates the optimizations over $\allX$ and $\allT$. We preferred this approach due to its relative simplicity over elaborate dictionary update schemes such as K-SVD \cite{aharon2006img}. Nevertheless, since the alternating optimization steps need to be performed until convergence, each step must be reasonably fast.
 Although optimizing over $\allX$ is easy, optimizing over $\allT$ is relatively more difficult due to the simplicial constraint.
 We find that optimizing over $\allT$ with a general solver, such as CVX \cite{cvx}, is too slow even for a moderate number of frames $F$.
 Moreover, during our iterative optimization, the output of the previous step can be fed into the current step for better initializaiton (hot start), but typical general solvers, such as those based on interior point algorithm, do not allow for a hot start.
@@ -359,8 +358,8 @@ By fixing the variable $\allX$ in Equation (\ref{eq:ourproblem_final}), the cost
 \end{aligned}
 \label{eq:ourproblem_TT}
 \end{equation}
-Notice that if the term $||\allT - \allT^\top||_\text{F}^2$ vanishes, the cost function is the same to Equation (\ref{eq:l1_given3D}). Equation (\ref{eq:l1_given3D}) can be decomposed into Equation (\ref{eq:l1_new_equal}), and optimized over $\oneT_f$ for each $f=1,\dots,F$ independently.
-Therefore the number of variables for each subproblem is much smaller compared to the total number of variables in $\allT$, and it can be parallelized on the level of subproblems.
+Notice that if the term $||\allT - \allT^\top||_\text{F}^2$ vanishes, the cost function is the same to Equation (\ref{eq:l1_given3D}), which can be decomposed into Equation (\ref{eq:l1_new_equal}), and optimized over $\oneT_f$ for each $f=1,\dots,F$ independently.
+Advantageously, the number of variables for each subproblem is much smaller compared to the total number of variables in $\allT$, and it can be parallelized on the level of subproblems.
 Moreover, \citet{chen:hal-00995911} propose a fast solver to the optimization problem in Equation (\ref{eq:l1_new_equal}) based on an active-set algorithm that can benefit from the solution sparsity.
 However, the cost term $||\allT - \allT^\top||_\text{F}^2$ prevents the decomposition.
 
@@ -401,10 +400,10 @@ The three Equations (\ref{eq:step1}), (\ref{eq:step2}) and (\ref{eq:step3}) iter
 \subsection{Initialization of the Optimization}
 
 Given the non-convexity of our original cost function (Equation (\ref{eq:ourproblem_final})), the accuracy of our estimates is  sensitive to the initialization values used by our iterative optimization. 
-Hence, we design a 3D structure (i.e.~$\allX$) initialization mechanism aimed at
+Hence, we design a 3D structure (\emph{i.e}.~$\allX$) initialization mechanism aimed at
 enhancing the robustness and accelerating the convergence of our biconvex framework.
 While our approach explicitly encodes the absence of concurrent 2D observations, we aim to leverage the existence of nearly-incident corresponding viewing rays as a cue for the depth initialization of a given 3D point $\oneX_{(p,f)}$.
-To this end, we identify for each bundle of viewing rays captured in $I_f$ (i.e. associated with a given shape structure $\shape_f$) an alternative structure instance captured at $I_j$ that minimizes the Euclidean 3D triangulation error across all corresponding viewing rays. In order to avoid a trivial solution arising from the small-baseline typically associated with consecutive frames of a single video, we restrict our search to ray bundles captured from distinct video sequences.
+To this end, we identify for each bundle of viewing rays captured in $I_f$ (\emph{i.e}. associated with a given shape structure $\shape_f$) an alternative structure instance captured at $I_j$ that minimizes the Euclidean 3D triangulation error across all corresponding viewing rays. In order to avoid a trivial solution arising from the small-baseline typically associated with consecutive frames of a single video, we restrict our search to ray bundles captured from distinct video sequences.
 
 The position of each point $\oneX_{(p,f)}$ in $\shape_f$ is determined by $d_{(p,f)}$ as in Equation (\ref{eq:X_representedBy_d}).
 Denoting $\mathbf{d}_f = [d_{(1,f)}, \dots, d_{(P,f)} ]$, we can find the  distance between
@@ -417,8 +416,7 @@ This is a quadratic cost function with a closed-form solution. % corresponding t
 
 We then build a symmetric distance matrix $\mathbf{D}$ with element $D_{(f,j)}$ equal to the minimum cost of Equation (\ref{eq:init}).
 If the frames $f$ and $j$ are from the same video, $D_{(f,j)}$ is set to infinity.
-%Next, we enforce cheirality constraints on the depth values, as we find many pseudo-intersection points with negative ray depth for spatio-temporally distant pairs of viewing rays.
-Next, we find many pseudo-intersection points with negative ray depth for spatio-temporally distant pairs of viewing rays, and the corresponding element in $\mathbf{D}$ is also set to infinity.
+Next, we identify many pseudo-intersection points with negative depth (\ie divergent pairs of viewing rays), and set the corresponding element in $\mathbf{D}$ to infinity.
 Finally, we determine the minimum element of each $f$-th row in our distance matrix $\mathbf{D}$ and assign the corresponding depth values $\mathbf d^*_f$ as our initialization for the definition of our 3D structure $\mathbf{S}_f$.
 
 \begin{figure}
@@ -430,7 +428,7 @@ Finally, we determine the minimum element of each $f$-th row in our distance mat
 
 The above initialization is done regardless of available measurements, since we only look for an approximate initialization for the solver. In the case of missing data, the corresponding 3D points in the shape are simply ignored when minimizing Equation (\ref{eq:init}).
 
-The output of the initialization is typically close to the ground truth, but may fail occasionally, as is shown in Figure \ref{fig:init}. This kind of wrong initialization may lead to wrong estimation of the two shapes if $\Phi_2(\allX)$ in Equation (\ref{eq:ourproblem_final}) is not present, because these two shapes can well represent each other. Our cost term $\Phi_2(\allX)$ helps to pull the occasional incorrect shapes out of local minima.
+The output of the initialization is typically close to the ground truth, but may fail occasionally, as is shown in Figure \ref{fig:init}. This kind of wrong initialization may lead to wrong estimation of the two shapes if the smoothness term $\Phi_2(\allX)$ in Equation (\ref{eq:ourproblem_final}) is not present, because these two shapes can well represent each other. Our cost term $\Phi_2(\allX)$ helps to pull the occasional incorrect shapes out of local minima.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,9 +446,9 @@ The output of the initialization is typically close to the ground truth, but may
 This section provides key insight to our algorithm for dynamic object reconstruction without sequencing. %The following important statements will be explained at length.
 The following statements will be illustrated in detail.
 \begin{enumerate}
-\item To obtain good reconstructability, a shape observed by one video should not be used to represent the shape observed in the same video. 
-\item To achieve accurate results, a 3D shape should be well approximated by other shapes.
-\item While sequencing information is vital in other trajectory triangulation methods for structure estimation \cite{Park_ECCV2010,Valmadre_CVPR2012}, our method does not require it.
+\item Interleaved 2D measures across video streams yields favorable viewing ray geometry for 3D shape estimation.
+\item High-frequency 2D observations and smooth object motion jointly validate our self-expressive structure prior for accurate shape estimation.
+\item No dependence on the availablity of sequencing information as opposed to existing approaches \cite{Park_ECCV2010,Valmadre_CVPR2012}.
 \end{enumerate} 
 Next, we first describe the formulation of reconstruction errors by our method, based on which the above statements are illustrated at length in the subsequent three subsections.
 
@@ -480,21 +478,22 @@ Then, any point $\oneX_f$ on the viewing ray that passes through $\oneX^*_f$ can
 \end{equation}
 where the unknown $l_f$ is the signed distance from the ground truth along the viewing ray. 
 
-When minimizing Equation (\ref{eq:recon_original}), using either Equation (\ref{eq:new_line_represent}) or Equation (\ref{eq:X_representedBy_d}) to represent $\oneX_f$ actually 
-generates the same 3D point, though the estimated values of $d_f$ and $l_f$ may not be the same. 
-Therefore, $l_f$ represents the Euclidean error of our  method. 
+
+
+When minimizing Equation (\ref{eq:recon_original}), using either Equation (\ref{eq:new_line_represent}) or Equation (\ref{eq:X_representedBy_d}) to represent $\oneX_f$ in practice generates different values of $d_f$ and $l_f$, but the estimated 3D points are actually identical. Therefore, $|l_f|$ represents the Euclidean error of our  method. 
+
 %It means if $l_f$ equals 0, the dynamic 3D point is ideally reconstructed.
 
 Equation (\ref{eq:recon_original}) is a quadratic objective function without any constraint and has a closed-form solution. We use Equation (\ref{eq:new_line_represent}) to represent the 3D point, and by setting the derivative of Eq.~(\ref{eq:recon_original}) over variables $\mathbf{l} = [l_1,\dots,l_f,\cdots,l_F ]$ to 0, we obtain a linear equation system denoted as
 \begin{equation}
 \mathbf{A}\mathbf{l} = \mathbf{b},	\label{eq:alb}
 \end{equation}
-where $\mathbf{A}$ is an $F \text{X} F$ matrix with the $f$-th row given by
+where $\mathbf{A}$ is an $F \times F$ matrix with the $f$-th row given by
 \begin{equation}
 \mathbf{A}_{:f} = (\mathbf{I}-\allT)_{:f}(\mathbf{I}-\allT)^\text{T} \text{diag}([\mathbf{r}^T_1 \mathbf{r}_f, \cdots, \mathbf{r}_F^T \mathbf{r}_f] ),
 \label{eq:A}
 \end{equation}
-and $\mathbf{b}$ is an $F \text{X} 1$ vector with the $f$-th element given by
+and $\mathbf{b}$ is an $F \times 1$ vector with the $f$-th element given by
 \begin{equation}
 %\mathbf{b}_{f} = \mathbf{r}_f^T[X^*_1,\dots,X^*_F] (\mathbf{I}-\allT) (I-\allT)_{:f}.
 \mathbf{b}_{f} = \mathbf{r}_f^T \allX^* (\mathbf{I}-\allT) (I-\allT)_{:f}^{\text{T}}.
@@ -529,8 +528,7 @@ In our case, in order to achieve high reconstructability, $||\mathbf{A}^{-1}||_2
 \includegraphics[width=0.86\textwidth]{chapter5/resource/random_cam.png}
 \label{fig:randCam}
 }\\
-\caption[Illustration of three camera setups.]{Simulated camera setups. The blue curve is a trajectory of a 3D point obtained from real motion capture data. Figures \ref{fig:oneCam} and \ref{fig:multiCam} show the slow-moving handheld cameras at three time instances. Figure \ref{fig:randCam} depicts a scenario where each camera only captures one image.
-Figure \ref{fig:multiCam} and Figure \ref{fig:randCam} show the camera setups of our method and of the method by \citet{zheng2014joint}, respectively. Coordinates are in millimeters (mm).
+\caption{Simulated camera setups. The blue curve is a trajectory of a 3D point obtained from  motion capture data. Figures \ref{fig:oneCam} and \ref{fig:multiCam} depict the camera setups of  one and four slow-moving handheld cameras. Figure \ref{fig:randCam} depicts a scenario where each random camera only captures one image. Figure \ref{fig:multiCam} and Figure \ref{fig:randCam} show the camera setups used in our method and \cite{zheng2014joint}, respectively. Coordinates are in millimeters (mm).
 }
 \label{fig:condition}
 \end{figure*}
@@ -558,9 +556,12 @@ The 3D structure at each time instance is projected to one of the virtual camera
 
 We estimate the system condition using Equation (\ref{eq:sysCondition}) on 500 trials with random cameras. 
 The average system conditions for the cases of Figures \ref{fig:oneCam}, \ref{fig:multiCam} and \ref{fig:randCam} are 1.48e+04, 22.3, and 29.0 respectively. It is evident the setup with one handheld camera has very low reconstructability.
-Note that even though system conditions of camera setups in Figures \ref{fig:multiCam} and \ref{fig:randCam} are favorable, sequencing information for these two cases is not readily available.
+Note that even though the system conditions of the camera setups in Figures \ref{fig:multiCam} and \ref{fig:randCam} are favorable, in practice the important sequencing information (see Section \ref{sec:importance_of_image_sequencing}) across different cameras for these two cases is not readily available.
 
-To illustrate that the shape observed by one video should not be used to represent the shape observed in the same video (statement 1), we conduct an experiment to show the system condition if the observations from different video streams do not interleave. As shown in Figure \ref{fig:frameDist}, the dynamic object is observed by one camera for $N$ frames, and then observed by another camera for $N$ frames. We show empirically that as $N$ increases, the system condition increases monotonically, which indicates larger reconstruction error. If statement 1 is not met, it is likely the consecutive observations from the same video stream are used. This results in a large system condition and hence low reconstructability, even under the assumption that $\allT$ can be correctly estimated.
+To illustrate the importance of cross-sequence 2D observations for our structure estimation process (statement 1), we evaluate system condition as a function of increased temporal gaps between cross-sequence samples. As shown in Figure \ref{fig:frameDist}, the dynamic object is observed by one camera for $N$ frames, and then observed by another camera for $N$ frames. We show empirically that as $N$ increases, the system condition increases monotonically, which indicates more unstable reconstruction and typically larger errors (see experiments in Section \ref{sec:comparison_to_other_methods}), even under the assumption that $\allT$ can be correctly estimated. This also illustrates that temporally consecutive shapes observed by the same video stream should not be used to represent each other, as is done in Section \ref{sec:dictionary_space_reduction}.
+
+
+%To illustrate that the shape observed by one video should not be used to represent the shape observed in the same video (statement 1), we conduct an experiment to show the system condition if the observations from different video streams do not interleave. As shown in Figure \ref{fig:frameDist}, the dynamic object is observed by one camera for $N$ frames, and then observed by another camera for $N$ frames. We show empirically that as $N$ increases, the system condition increases monotonically, which indicates larger reconstruction error. If statement 1 is not met, it is likely the consecutive observations from the same video stream are used. This results in a large system condition and hence low reconstructability, even under the assumption that $\allT$ can be correctly estimated.
 
 \begin{figure}
 \centering
@@ -577,24 +578,26 @@ To illustrate that the shape observed by one video should not be used to represe
 \caption[System condition given different number of consecutive captures from one camera.]{The reconstructability of the system is lower if the period of single-camera capture is longer.}
 \end{figure}
 
-In our experiment, we observe the reconstructability is closely related to the camera motion and the object motion. 
-Specifically, if shape $\mathbf{S}_j$ is the most related shape to $\mathbf{S}_f$, as indicated by $\allT$, the relative directions of viewing rays $\mathbf{r}_f$ and $\mathbf{r}_j$, which are associated with shape $\mathbf{S}_f$ and $\mathbf{S}_j$ respectively (note we only have one point per shape in this analysis), determine the reconstructability. If the directions of $\mathbf{r}_f$ and $\mathbf{r}_j$ converge, \ie the camera motion is relatively larger than the object motion, the reconstructability is higher. Otherwise, it is lower. 
-In the case of one handheld camera, the camera motion is much smaller than the dynamic objects,  and the viewing rays diverge, so the reconstructability is low. In contrast, if $\mathbf{r}_j$ and $\mathbf{r}_f$ are associated with different video cameras, the distance between the camera centers is much larger than the motion of the object. Hence the reconstructability is high.
-This observation is analogous to the classic triangulation of static scenes, where small baselines produce inaccurate reconstruction. Note the same conclusion was also made by Park \etal~\cite{park20153d}, though their reconstruction algorithm is different from ours.
+In fact, we observe that the reconstructability is closely related to the camera motion and the object motion. 
+Specifically, if shape $\mathbf{S}_j$ is the most related shape to $\mathbf{S}_f$, as indicated by $\allT$, the relative directions of viewing rays $\mathbf{r}_f$ and $\mathbf{r}_j$ (note we only have one point per shape in this analysis), determine the reconstructability. If the directions of $\mathbf{r}_f$ and $\mathbf{r}_j$ converge, \ie the camera motion is relatively larger than the object motion, the reconstructability is higher. 
+In the case of one handheld camera, the camera motion can be much smaller than the dynamic objects, and the viewing rays diverge, yielding low reconstructability. In contrast, if $\mathbf{r}_j$ and $\mathbf{r}_f$ are associated with different video cameras, the distance between the camera centers is much larger than the motion of the object. Hence the reconstructability is high.
+This observation is analogous to the classic triangulation of static scenes, where small baselines produce inaccurate reconstruction. Note the same conclusion was also made by \citet{park20153d}, though their reconstruction algorithm is different from ours.
 
 
 
 \subsection{Shape Approximation Residual} \label{sec:shape_approximation}
-While $\mathbf{A}$ depends on the viewing ray directions, which are available before reconstruction, $\mathbf{b}$ relies on the actual unknown positions of the ground truth structure $\allX^*$. To achieve accurate reconstruction, each value in the vector $\mathbf{b}$ should be close to 0. 
+While $\mathbf{A}$ depends on the viewing ray directions, which are available before reconstruction, 
+$\mathbf{b}$ relies on the actual unknown positions of the ground truth structure $\allX^*$ (Equation (\ref{eq:b})). 
+To achieve accurate reconstruction, each value in the vector $\mathbf{b}$ should be close to 0. 
 
 \begin{figure}
 \centering
 \includegraphics[width=0.80\textwidth]{chapter5/resource/residual.pdf}
-\caption[Average residual at differernt camera frame rates.]{Average residual $res$ (over 130 motion capture datasets present in \cite{cg-2007-2}) at different camera frame rates.}
+\caption[Average residual at differernt camera frame rates.]{Average residuals $res$ at different camera frame rates. Results are attained from 130 motion capture datasets in the work by \citet{cg-2007-2}.}
 \label{fig:residual}
 \end{figure}
 
-Since in Equation (\ref{eq:b}), $(I-\allT)_{:f}^\text{T}$ is sparse. $\mathbf{b}_f$ can be considered as a linear combination of a few columns of matrix $\allX^*(I-\allT)$, and then dot product with the unit vector $\mathbf{r}_f$.
+Since in Equation (\ref{eq:b}), $(I-\allT)_{:f}^\text{T}$ is sparse. $\mathbf{b}_f$ can be considered as a linear combination of a few columns of matrix $\allX^*(I-\allT)$ dotted with the unit vector $\mathbf{r}_f$.
 Therefore, the value of $\mathbf{b}_f$ mainly relies on $||\allX^*(I-\allT)||_\text{F}$.
 Accordingly, we define the residual per point as
 \begin{equation}
@@ -605,7 +608,7 @@ We test the residual $res$ given motion capture data sampled at different frame 
 
 
 \subsection{Importance of Image Sequencing} \label{sec:importance_of_image_sequencing}
-The temporal order of images, \ie image sequencing, plays an important role in dynamic object reconstruction \cite{Park_ECCV2010,zheng2014joint,Valmadre_CVPR2012}. The work by \cite{Valmadre_CVPR2012} generalizes the method by \cite{Park_ECCV2010} in a new framework based on high-pass filters. Here, we briefly describe the method by \citet{Valmadre_CVPR2012} and its relation to our method, from which it can be revealed why their methods require sequencing information as opposed to ours. 
+The temporal order of images, \emph{i.e}.~image sequencing, plays an important role in dynamic object reconstruction \cite{Park_ECCV2010,Valmadre_CVPR2012}. The work by \cite{Valmadre_CVPR2012} generalizes the method by \cite{Park_ECCV2010} in a new framework based on high-pass filters. Here, we briefly describe the method by \citet{Valmadre_CVPR2012} and its relation to our method, from which it can be revealed why their methods \cite{Park_ECCV2010,Valmadre_CVPR2012} require sequencing information as opposed to ours. 
 
 Assuming the object moves smoothly in the space, Valmadre \etal~\cite{Valmadre_CVPR2012} triangulate the 3D trajectory of an 3D point by minimizing its response to a set of high-pass filters.
 Given a predefined high pass filter $g=[g_M,\dots,g_1]$, the trajectory is estimated by 
@@ -626,10 +629,11 @@ g_1		& \ddots & g_M	  	\\
 \right]
 \label{eq:valmadre_filter_G}
 \end{equation}
-Each column of $G$ is a high-pass filter for the local region of a trajectory. From the formulation, it is required all the shapes (columns of $\allX$) should be ordered temporally. 
+Each column of $G$ is a high-pass filter for the local region of a trajectory. From the formulation, it is required for all the shapes (columns of $\allX$) to be ordered temporally. 
 
-By comparing Equation (\ref{eq:valmadre_equ}) with Equation (\ref{eq:recon_original}), it can be shown $G$ is equivalent to our method with a predefined value of $\allT$, under the assumption that all the columns of $\allX$ are ordered in temporal order. 
-For instance,  if the high pass filter is set to $g=[1,-1]$, it is equivalent (ignoring the difference at boundary) that $\allT$ is set to
+Comparing Equation (\ref{eq:valmadre_equ}) with Equation (\ref{eq:recon_original}), we can see the two equations are the same if $\mathbf{G}$ equals $\mathbf{I}-\allT$.
+In effect, the method by \cite{valmadre2012general} can be regarded as our method with a predefined $\allT$.
+For instance,  if the high pass filter is set to $\mathbf{g}=[1,-1]$, it is equivalent (ignoring the difference at boundary) that $\allT$ is set to
 \begin{equation}
 \allT = \left[
 \begin{matrix}
@@ -656,8 +660,7 @@ Another high-pass filter proposed by \citet{Valmadre_CVPR2012} is $[-1, 2, -1]$,
 %\end{equation}
 In effect, their method can be deemed as our method with predefined $\allT$. 
 
-The importance of sequencing can be further revealed from analysis of residual defined by Equation (\ref{eq:residual}). The residual will be large if columns of $\allX^*$ are randomly shuffled. In contrast, our method cleverly and automatically picks the most related shapes (matrix columns) using compressive sensing to produce small $res$.
-
+The importance of sequencing can also be revealed from analysis of residual defined by Equation (\ref{eq:residual}). For the method by \cite{Valmadre_CVPR2012} with predefined $\mathbf{G}$, the residual will be large if columns of $\allX^*$ are randomly shuffled. In contrast, our method leverages compressive sensing to estimates $\allT$ (instead of predefined), which automatically picks the most related shapes to produce small residuals.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -668,10 +671,10 @@ The importance of sequencing can be further revealed from analysis of residual d
 In our experiments, we evaluate our algorithm on both synthetic and real datasets. $\lambda_1$ and $\lambda_2$ in Equation (\ref{eq:ourproblem_final}) are set empirically to 0.05 and 0.1 for all the experiments. To alleviate the influence of different camera system scales (\ie~differing the scale of $\allX$), the average distance between camera centers is normalized to 1 before applying our method. The soft constraint parameterization is used only in the presence of noisy measurements.
 
 \subsection{Simulation}
-We use synthetic datasets to evaluate the accuracy and robustness of our methods, and also compare with two state-of-the-art methods.
+We use synthetic datasets to evaluate the accuracy and robustness of our proposal, and also compare against two state-of-the-art methods \cite{Valmadre_CVPR2012,dai2014simple}.
 To generate synthetic data, we use the real motion capture datasets in the work by \citet{cg-2007-2}, and leverage them as ground truth structure for our estimation.
 The whole datasets contain 130 different real motions including hopping, jogging, cartwheel, punching, \emph{etc}.
-Each motion capture dataset is comprised of the temporal sequences of a common set of 44 3D points in real scale, which corresponds within our framework to ground truth structure $\allX_{GT}$. The frame rate of the motion datasets, \ie~the sampling rate of real continuous motion, is 120 Hz. The length of each dataset ranges from 45 to 701 frames, and with an average of 273 frames. 
+Each motion capture dataset is comprised of the temporal sequences of a common set of 44 3D points in real scale, which corresponds within our framework to ground truth structure $\allX_{GT}$. The frame rate of the motion datasets, \ie~the sampling rate of the real continuous motion, is 120 Hz. The length of each dataset ranges from 45 to 701 frames, and with an average of 273 frames. 
 
 These 3D points are projected onto virtual cameras to generate input 2D measures into our methods.
 We select 4 virtual cameras with a resolution of 1M and focal length of 1000, and we position the static cameras around the centroid defined by $\allX_{GT}$. 
@@ -681,7 +684,7 @@ Considering the frame rate of the motion capture datasets is 120 Hz and there ar
 Every temporal 3D capture is randomly assigned to each camera to build 4 disjoint image sequences. %To better evaluate how well our method recover the coefficient matrix $\allT$, 
 Unless otherwise mentioned, we enforce that no temporally consecutive captures are assigned to the same image sequence.
 
-To evaluate our method, the Euclidean errors between the ground truth and estimated 3D points are computed.
+To evaluate our method, we compute the Euclidean errors between the ground truth and the estimated 3D points.
 We define the accuracy by counting the percentage of points having errors less than thresholds of $10$, $20$, $30$, $40$, $50$, and $100$ mm.
 
 \subsubsection{Accuracy} \label{sec:experiment_accuracy}
@@ -705,7 +708,7 @@ We define the accuracy by counting the percentage of points having errors less t
 	{7.5}  &  0.9036  &  0.9415  &  0.9568 &   0.9655 &   0.9711 &  0.9833\\
 	\hline	
 	\hline
-	\begin{tabular}{@{}c@{}} 30 (unconstrained \\ assignment) \end{tabular} & 0.9766  &  0.9905 &   0.9947 &   0.9963  &  0.9971 &   0.9990\\
+	\begin{tabular}{@{}c@{}} $30^*$ (unconstrained \\ assignment) \end{tabular} & 0.9766  &  0.9905 &   0.9947 &   0.9963  &  0.9971 &   0.9990\\
 	\hline	
   \end{tabular}
 \end{minipage}
@@ -721,7 +724,7 @@ We define the accuracy by counting the percentage of points having errors less t
 \end{figure}
 
 \textbf{Different frame rates.}
-We first evaluate how the algorithm behaves under different frame rates of capturing.
+We first evaluate how the algorithm behaves under different capture frame rates.
 2D measures without noise are used to evaluate the accuracy of our method. In addition to the original motion capture data at 120 Hz, we also downsample the data to 60 and 30 Hz, so that each camera has frame rate of 15 and 7.5 Hz on average. As shown in Figure \ref{fig:error_framerate}, the accuracy becomes worse as the frame rate gets slower. 
 The main reason is that the self-representation residual is larger at lower frame rate. We notice that at a frame rate of 7.5 Hz, our method does not work well on the quick motions with large and nonlinear shape deformation, such as hopping or arms rotation. However, still  more than 97\% of 3D points have errors less than 5 cm, which is already very small considering the scale of a person and the distance range of the cameras.
 %One of the main reasons is that the residual becomes larger and then the reconstructability becomes smaller. Note that the residual depends on both the frame rate and the speed of motion.
@@ -732,10 +735,10 @@ The main reason is that the self-representation residual is larger at lower fram
 We also quantitatively evaluate the estimated $\allT$. Using the same two measures described in Section \ref{sec:principle}, 
 we get values of 0.9902 and 0.9923, compared to 0.9972 and 0.9994 if the 3D points are given. Therefore, our method very accurately recovers the local temporal information.
 
-\textbf{Unconstrained capture assignment}
-We test the case that each capture is randomly assigned to one of the four cameras so that temporally consecutive captures could have a chance to be assigned to the same camera, as is shown in Figure \ref{fig:unconstrained_assign}. In this specific case, shapes $\mathbf{S}_1$ and $\mathbf{S}_5$ are used to represent $\mathbf{S}_2$, $\mathbf{S}_3$ and $\mathbf{S}_4$. Based on theory in Section \ref{sec:shape_approximation}, using spatially farther away shapes to represent the current shape has larger residual and hence larger reconstruction errors, as is validated in Figure \ref{fig:error_framerate}.
+\textbf{Unconstrained capture assignment.}
+We test the case that each capture is randomly assigned to one of the four cameras so that temporally consecutive captures could have a chance to be assigned to the same camera, as is shown in Figure \ref{fig:unconstrained_assign}. In this specific case, shapes $\mathbf{S}_1$ and $\mathbf{S}_5$ are used to represent $\mathbf{S}_2$, $\mathbf{S}_3$ and $\mathbf{S}_4$. Based on the theory in Section \ref{sec:shape_approximation}, using spatially further away shapes to represent the current shape has larger residual and hence larger reconstruction errors, as is validated in Figure \ref{fig:error_framerate}.
  
-\subsubsection{Corrupted Measurements}
+\subsubsection{Data Robustness}
 
 \begin{figure*}
 \centering
@@ -774,8 +777,8 @@ We test the case that each capture is randomly assigned to one of the four camer
 
 To evaluate the robustness of our method, we test it in the case of noisy measurements and missing data.
 
-\textbf{Noisy measurements.} We add zero-mean Gaussian noise with different standard deviations to the 2D measures. Considering that the focal length of the image is 1000 pixel, one pixel error corresponds to one millimeter if the object is one meter away.
-We apply the soft constraint formulation described in Section \ref{sec:noisy_measure} and empirically set the parameter $\lambda_3$ to 100. As depicted in Figure \ref{fig:error_noise}, the quality of reconstruction degrades as the noise level increases. As $\lambda_3$ increases, the soft constraint is more close to the hard constraint. % since more penalty is posed if the estimated points are away from the viewing ray. 
+\textbf{Noisy measurements.} We add zero-mean Gaussian noise with different standard deviations to the 2D measurements. Considering that the focal length of the image is 1000 pixel, one pixel error corresponds to one millimeter if the object is one meter away.
+We apply the soft constraint formulation described in Section \ref{sec:noisy_measure} and empirically set the parameter $\lambda_3$ to 100. As depicted in Figure \ref{fig:error_noise}, the quality of reconstruction degrades as the noise level increases. As $\lambda_3$ increases, the soft constraint approximates the hard constraint. % since more penalty is posed if the estimated points are away from the viewing ray. 
 We evaluate the difference of the estimated results by the hard constraint formulation and the soft constraint formulation with different $\lambda_3$, and we show the median difference in Figure \ref{fig:soft_hard_diff}. It is apparent that as $\lambda_3$ increases, the difference of the output between the two formulations becomes smaller.
 
 We have tested the hard constraint formulation using noisy measurements, and the overall accuracy of the output is very similar. Though the soft constraint appears more robust in the presence of noise as it allows the points off the viewing ray, there is no guarantee or proof this constraint will achieve more accurate results, as it depends on the exact motion of the objects.
@@ -827,8 +830,8 @@ Our method essentially linearly interpolates the 3D points along the trajectory 
 %\end{figure}
 
  
-\subsubsection{Comparison to Other Methods}
-We compare our method with one of the non-rigid structure from motion methods \cite{dai2014simple} and one of the trajectory triangulation methods \cite{Valmadre_CVPR2012}. Both of these methods are state-of-the-art for dynamic object reconstruction.
+\subsubsection{Comparison to Other Methods} \label{sec:comparison_to_other_methods}
+We compare our method with a non-rigid structure from motion method \cite{dai2014simple} and a trajectory triangulation method \cite{Valmadre_CVPR2012}. Both of these methods are state-of-the-art for dynamic object reconstruction.
 
 \textbf{NRSFM method.} Non-rigid structure from motion (NRSFM) recovers both the camera motion and the dynamic structure. It is tempting to use those methods to solve our problem, since our problem with known camera poses seems to be easier. 
 However, most NRSFM methods work on an orthographic or weak perspective camera model, and it is unclear of their applicability under the perspective model. \citet{Park_ECCV2010} test the NRSFM methods by \citet{Akhter_NIPS08,torresani2008nonrigid,paladini2009factorization} under a perspective camera model, but all of them fail to produce reasonably good results. In this paper, we test the state-of-the-art NRSFM method by \citet{dai2014simple}.
@@ -837,7 +840,7 @@ However, most NRSFM methods work on an orthographic or weak perspective camera m
 The method by \citet{dai2014simple} is based on the assumption that each non-rigid shape $\oneX_f$ is a linear combination of $K$ shape bases, and hence the shape matrix (corresponding to $\allX$ in our problem description) has low rank.
 After estimating the camera motion,  they recover the structure by minimizing the rank of the shape matrix, which is achieved through the minimization of the matrix nuclear norm.  Their method applies to an orthographic camera model, but can be easily adapted to a perspective model, as described below. 
 
-We use the block matrix method proposed in the work by \citet{dai2014simple}. Denoting
+Given the camera poses, we use the block matrix method proposed in the work by \citet{dai2014simple}. Denoting
 \begin{equation}
 \allX^\# = 
 \begin{bmatrix}
@@ -864,7 +867,7 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 
 \begin{figure}
 \centering
-\subfloat[Our method accurately reconstructs the 3D points]{
+\subfloat[Our method accurately reconstructs the 3D points ($1/\sigma_{\text{min}}=7.589$, $err = 0.0825$).]{
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0001.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0033.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0055.pdf}
@@ -873,7 +876,7 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/mymethod/0091.pdf}
 \label{fig:ourmethod_Qualitative_result}
 }\\
-\subfloat[The modified prior-free method \cite{dai2014simple} fails to produce reasonable results]{
+\subfloat[The modified prior-free method \cite{dai2014simple} fails to produce reasonable results. ($err = 472.9033$)]{
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0001.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0033.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0055.pdf}
@@ -882,7 +885,7 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/priorfree/0091.pdf}
 \label{fig:prior_free_Qualitative_result}
 }\\
-\subfloat[General trajectory prior method \cite{Valmadre_CVPR2012} produces large errors due to high system condition ($1/\sigma_{\text{min}}=2228$)]{
+\subfloat[General trajectory prior method \cite{Valmadre_CVPR2012} produces large errors due to high system condition ($1/\sigma_{\text{min}}=2228$, $err = 76.9700$).]{
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0001.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0033.pdf}
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0055.pdf}
@@ -891,7 +894,8 @@ Unfortunately, the qualitative results in Figure \ref{fig:prior_free_Qualitative
 \includegraphics[width=0.155\textwidth]{chapter5/resource/compare_with_prior_free/filtermethod/0091.pdf}
 \label{fig:trajectory_Qualitative_result}
 }
-\caption[Comparision against two existing dynamic object reconstruction methods.]{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. The average error per point for the three methods are (a) 0.0825, (b) 472.9033, and (c) 76.9700.}
+\caption[Comparision against two existing dynamic object reconstruction methods.]
+{Qualitative comparison of our method with \cite{dai2014simple} and \cite{Valmadre_CVPR2012} on the motion capture dataset `jog on place' in \cite{cg-2007-2}. The dataset has 214 frames, with 44 points per frame (only 24 are shown for visualization purposes). The black and red points are the ground truth and the estimated results, respectively. $err$ is the average Euclidean error per point.}
 \end{figure}
 
 \textbf{Trajectory Triangulation Method.} We also compare with the trajectory triangulation method by  \citet{Valmadre_CVPR2012}, as is described in Section \ref{sec:importance_of_image_sequencing}. 
