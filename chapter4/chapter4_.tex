@@ -138,19 +138,20 @@ Our discrete-continuous optimization strategy first uses a generalized minimum s
 
 In the discrete optimization step, we map the continuous problem of finding the 3D point along each ray to a discrete problem of selecting a 3D point out of a set of discrete 3D points. Then we determine one 3D point along each ray and the adjacency $\mathbf{p}$ by computing the GMST on an undirected multipartite graph $\cal{G}(V,E)$~\cite{MyungLT_95}. This allows us to simultaneously  determine the topology and the discrete 3D object positions.
 
-An undirected multipartite graph is a graph $\cal{G}(V,E)$ whose vertices are partitioned into $N$ partite sets $\left\{V_1, \dots, V_N\right\}$ with $\vert V_i \vert = k$, while fulfilling ${\cal V}=V_1 \cup V_2 \cup \dots \cup V_N$ and $V_o \cap V_p = \emptyset, \forall o\neq p$, with $o,p \in \{1, \dots, N \}$. The multipartite graph $\cal{G}(V,E)$ has only edges between the different partite sets  of vertices $V_o$, and all edge cost are non-negative. Now we will detail on how we define the graph $\cal{G}(V,E)$ based on Equation \ref{equ:costFunc}.
+An undirected multipartite graph is a graph $\cal{G}(V,E)$ whose vertices are partitioned into $N$ partite sets $\left\{V_1, \dots, V_N\right\}$ with $\vert V_i \vert = k$, while fulfilling ${\cal V}=V_1 \cup V_2 \cup \dots \cup V_N$ and $V_o \cap V_p = \emptyset, \forall o\neq p$, with $o,p \in \{1, \dots, N \}$. The multipartite graph $\cal{G}(V,E)$ has only edges between the different partite sets of vertices $V_o$, and all edge costs are non-negative. Next, we will explain on how we define the graph $\cal{G}(V,E)$ based on Equation \ref{equ:costFunc}.
 
 Each ray $\mathbf{X}_i(t)$ defines a one dimensional constraint on the 3D position of the object. We discretize the ray to obtain a discrete set of potential depth estimates. This leads to a finite set of possible 3D positions along the ray (see Figure \ref{fig:gmst}(a) for an illustration), defining a finite set of 3D point hypotheses %$\mathbf{\hat{X}}_i^o=\mathbf{X}_i (\hat{t}_o)$ with $\vert t_o \vert = k$,
 $\{\mathbf{\hat{X}}_i^o|o=1,\dots,k \}$,
 where $k$ is the number of the discrete hypotheses along the ray.
-In our representation, each 3D point $\mathbf{\hat{X}}_i^o$ establishes node $V_i^o$ in the graph. The set of nodes $\{V_i^o|o=1, \dots, k\}$ related to the ray $\mathbf{X}_i(t)$ of object $i$ defines a partite set of nodes $V_i$ in the graph $\cal{G}(V,E)$. 
-Given that no nodes within a group have any connecting edges, it enforces the traversal of the graph to be constrained among partite sets. 
+In our representation, each 3D point $\mathbf{\hat{X}}_i^o$ establishes a node $V_i^o$ in the graph. The set of nodes $\{V_i^o|o=1, \dots, k\}$ related to the ray $\mathbf{X}_i(t)$ of object $i$ defines a partite set of nodes $V_i$ in the graph $\cal{G}(V,E)$. 
+Given that no nodes within a group have any connecting edges, the resulting multipartite graph will contain no edges between the different depth hypotheses of object $i$.
+%it enforces the traversal of the graph to be constrained among partite sets. 
 %This is  consistent with the understanding of moving the different instances of an object class in the scene to determine the object class trajectory.
 
 We now define the edge cost of the multipartite graph based on Equation (\ref{equ:costFunc}).
 The multipartite graph only has edges between the nodes from different partite sets.
 %Given the properties of the multipartite graph we only insert edges between the nodes that are in different partite sets of nodes.
-We define the edge direction $\mathbf{d}_{i,j}$ between any two nodes $V_i^o$ and $V_j^p$ in the partite set $i$ and partite set $j$ respectively, as the consistency of the 3D motion with the motion tangents $\mathbf d_i$ and $\mathbf d_j$ (see Sec. \ref{sec:detection}). This definition comes from the intuition that the edge direction should be compliant with the motion tangent observed in the images. Given the motion of two objects $i$ and $j$ and their respective motion tangents $\mathbf d_i$ and $\mathbf d_j$, it is clear that the motion between the points $\mathbf{X}_i^o$ and $\mathbf{X}_j^p$ (associated with the nodes $V_i^o$ and $V_j^p$) should be close in direction to at least one of the motion tangents $\mathbf d_i$ and $\mathbf d_j$.
+We define the edge direction $\mathbf{d}_{i,j}$ between any two nodes $V_i^o$ and $V_j^p$ in the partite set $i$ and partite set $j$, respectively, as the consistency of the 3D motion with the motion tangents $\mathbf d_i$ and $\mathbf d_j$ (see Sec. \ref{sec:detection}). This definition comes from the intuition that the edge direction should be compliant with the motion tangent observed in the images. Given the motion of two objects $i$ and $j$ and their respective motion tangents $\mathbf d_i$ and $\mathbf d_j$, it is clear that the motion between the points $\mathbf{X}_i^o$ and $\mathbf{X}_j^p$ (associated with the nodes $V_i^o$ and $V_j^p$) should be close in direction to at least one of the motion tangents $\mathbf d_i$ and $\mathbf d_j$.
 %Then one can think that the edge direction $\mathbf{d}_{i,j}$ should be either $\mathbf{d}_i$ or $\mathbf{d}_j$, as is shown in Figure \ref{fig:node_DirectionA}. Any edge parallel to $\mathbf{d}_i$ or $\mathbf{d}_j$ should be encouraged.
 Therefore, we define the edge cost $e(V_i^o,V_j^p)$ of the edge between the nodes $V_i^o$ and $V_j^p$ as
 
@@ -182,36 +183,36 @@ Edge 1 and Edge 3 in Figure \ref{fig:node_DirectionB} have a relatively lower co
 \label{fig:nodeDirection}
 \end{figure}
 
-A generalized minimum spanning tree (GMST) on the graph $\cal{G}(V,E)$ is a tree of minimal cost that spans \emph{exactly one node} from each partite set $V_i$. GMST problem degenerates to a typical minimum spanning tree problem \cite{Cormen:2001:IA:580470} if each of the partite sets contains only one node.
-For our proposed graph, it means a GMST includes exactly one 3D point from each ray. Furthermore, GMST prefers the edge $e(V_i^o,V_j^p)$ that has small cost of $\|\mathbf{X}_i^o-\mathbf{X}_j^p\|^2$ and is compliant with the motion tangents in the images, as those edges have lower edge cost. Accordingly, a GMST is our desired solution for estimating the object class trajectory. Note that if we sample an infinite number of 3d points along each viewing ray, the corresponding GMST problem is equivalent to the original formulation (Equation (\ref{equ:costFunc})).% before discretization for the multipartite graph formulation.
+A generalized minimum spanning tree (GMST) on the graph $\cal{G}(V,E)$ is a tree of minimal cost that spans \emph{exactly one node} from each partite set $V_i$. The GMST problem degenerates to a typical minimum spanning tree problem \cite{Cormen:2001:IA:580470} if each of the partite sets contains only one node.
+For our proposed graph, it means a GMST includes exactly one hypothesized 3D point from each observation. Furthermore, a GMST prefers the edge $e(V_i^o,V_j^p)$ that has a small cost and is compliant with the motion tangents in the images, as those edges have lower edge cost. Accordingly, a GMST is our desired solution for estimating the object class trajectory. Note that if we sample an infinite number of 3D points along each viewing ray, the corresponding GMST problem is equivalent to the original formulation (Equation (\ref{equ:costFunc})).% before discretization for the multipartite graph formulation.
 
-The multipartite graph defined above contains a large amount of edges, which increases the complexity of computing the GMST.
-We use a deterministic way introduced by \citet{Ferreira_ESWA2012} to remove the redundant edges that are guaranteed not to be included in the GMST. Here we use a specific toy example in Figure \ref{fig:node_edgeRemove} to illustrate the method. If the cost of edge $(u,v)$ is larger than any cost of the 6 edges $(u,n_l)$ and $(v,n_l)$, $l=1,2,3$, the edge $(u,v)$ is safe to be removed. A simple proof is that if edge $(u,v)$ exists in the computed GMST, we could remove edge $(u,v)$ and replace it by one of the 6 edges to obtain a new GMST with lower cost. Therefore, edge $(u,v)$ can not be present in the GMST. Moreover, it is plausible to explore other ways to remove edges based on given prior information. For instance, if it is known the pairwise neighboring 3D objects are close in 3D space, we can safely remove the edges that connects two farther point hypotheses by applying a predefined threshold.
+The multipartite graph defined above contains a large number of edges, which increases the complexity of computing the GMST.
+We use a deterministic method introduced by \citet{Ferreira_ESWA2012} to remove the redundant edges that are guaranteed not to be included in the GMST. We show a specific toy example in Figure \ref{fig:node_edgeRemove} to illustrate the method. If the cost of edge $(u,v)$ is larger than any cost of the 6 edges $(u,n_l)$ and $(v,n_l)$, $l=1,2,3$, the edge $(u,v)$ is safe to be removed. A simple proof is that if edge $(u,v)$ exists in the computed GMST, we could remove edge $(u,v)$ and replace it with one of the 6 edges to obtain a new GMST with lower cost. Therefore, edge $(u,v)$ can not be present in the GMST. Moreover, it is plausible to explore other ways to remove edges based on given prior information. For instance, if it is known the pairwise neighboring 3D objects are close in 3D space, we can safely remove the edges that connect two spatially distant point hypotheses by applying a predefined threshold.
 
-The GMST problem was first introduced by \citet{MyungLT_95} and was extensively studied in the past two decades \cite{MyungLT_95,Dror_EJOR,Feremans_LL02,Oncan_CL08,Ferreira_ESWA2012} due to its wide applications in  telecommunications, agriculture watering, and facility distribution design \cite{MyungLT_95,Dror_EJOR}. Unlike the minimum spanning tree (MST) problem, which can be solved in polynomial time, finding the GMST is proved to be NP-hard \cite{MyungLT_95}. Myung \etal \cite{MyungLT_95} and Feremans \etal \cite{Feremans_LL02} propose several integer programming formulations for the GMST problem. However, those methods provide no guarantee of efficiency, especially when the problem scale is large. The computational challenge of the GMST problem has led to the development of metaheuristics \cite{Oncan_CL08,Ferreira_ESWA2012} that search the hypothesis space, and are empirically shown to be effective.
+The GMST problem was first introduced by \citet{MyungLT_95} and has been extensively studied in the past two decades \cite{MyungLT_95,Dror_EJOR,Feremans_LL02,Oncan_CL08,Ferreira_ESWA2012} due to its wide applications in  telecommunications, agriculture watering, and facility distribution design \cite{MyungLT_95,Dror_EJOR}. Unlike the minimum spanning tree (MST) problem, which can be solved in polynomial time, finding the GMST is proved to be NP-hard \cite{MyungLT_95}. Myung \etal \cite{MyungLT_95} and Feremans \etal \cite{Feremans_LL02} propose several integer programming formulations for the GMST problem. However, those methods provide no guarantee of efficiency, especially when the problem scale is large. The computational challenge of the GMST problem has led to the development of metaheuristics \cite{Oncan_CL08,Ferreira_ESWA2012} that search the hypothesis space and are empirically shown to be effective.
 
-We exploit the state-of-the-art GRASP-based approach proposed by Ferreira \etal \cite{Ferreira_ESWA2012}. GRASP (Greedy Randomized Adaptive Search Procedure) is a metaheuristic that consists of iterations comprising two phases: 1) solution construction and 2) solution improvement through local search. \citet{Ferreira_ESWA2012} propose the method considering several solution construction algorithms, a local search procedure, and two additional mechanisms: path-relinking and iterative local search. We refer readers to their paper \cite{Ferreira_ESWA2012} for more details.
+We exploit the state-of-the-art GRASP-based approach proposed by Ferreira \etal \cite{Ferreira_ESWA2012}. GRASP (Greedy Randomized Adaptive Search Procedure) is a metaheuristic that consists of iterations comprising two phases: 1) solution construction and 2) solution improvement through local search. \citet{Ferreira_ESWA2012} propose a method that considers several solution construction algorithms, a local search procedure, and two additional mechanisms: path-relinking and iterative local search. We refer readers to their paper \cite{Ferreira_ESWA2012} for more details.
 
 \subsection{Continuous Refinement}
-The output of GMST computation is the estimation of the 3D points $\mathbf{\widehat{X}}$ and the adjacency topology of the \oct. Then $\mathbf{d}_{i,j}$ is chosen to be one of $\mathbf{d}_i$ and $\mathbf{d}_j$  that has smaller angle to the vector $\mathbf{\widehat{X}}_i - \mathbf{\widehat{X}}_j$,
+The output of GMST computation is the estimation of the 3D points $\mathbf{\widehat{X}}$ and the adjacency topology $\mathbf{p}$ of the object class trajectory. Then, $\mathbf{d}_{i,j}$ is chosen to be one of $\mathbf{d}_i$ and $\mathbf{d}_j$  that has smaller angle to the vector $\mathbf{\widehat{X}}_i - \mathbf{\widehat{X}}_j$,
 \begin{equation}
 \mathbf{d}_{i,j}= \underset{\mathbf{d}\in{\{\mathbf{d}_i, \mathbf{d}_j}\} }{\arg\!\max}(|\mathbf{d} \cdot (\mathbf{\widehat{X}}_i - \mathbf{\widehat{X}}_j)| ),
 %\mathbf{d_{i,j}} = \text
 \end{equation}
 where $\cdot$ is the vector dot product.
-We fix the adjacency $\mathbf{p}$ given by the GMST, and add a final continuous refinement step for the 3D object position $\mathbf{\hat{X}}_i$, through a convex program optimization over variable $\mathbf{t}$
+We fix the adjacency $\mathbf{p}$ given by the GMST and add a final continuous refinement step for the 3D object position $\mathbf{\hat{X}}_i$, through a convex program optimization over variable $\mathbf{t}$
 %To achieve this we fix the adjacency $p$ and only optimize over the object positions $\mathbf{t}$ in Equation (\ref{equ:costFunc}). This leads to the following optimization problem:
 \begin{equation}
 \underset{\mathbf{t}} { \text{min} }
-\sum_{(i,j)\in{\mathbf{p}}}{\|\mathbf{d}_{i,j}\times(\mathbf{X}_i-\mathbf{X}_j)\|_2^2 + \lambda\|\mathbf{X}_i-\mathbf{X}_j\|_2^2}
+\sum_{(i,j)\in{\mathbf{p}}}{\|\mathbf{d}_{i,j}\times(\mathbf{X}_i-\mathbf{X}_j)\|_2^2 + \lambda\|\mathbf{X}_i-\mathbf{X}_j\|_2^2}.
 \label{equ:costFunc_continuous}
 \end{equation}
 
 \subsection{Reconstructability Analysis} \label{sec:analysis}
 
-Now we analyze the reconstructability of the proposed method, i. e. determining under which conditions the solution of Equation (\ref{equ:costFunc}) generates accurate 3D points. The direct analysis of Eq (\ref{equ:costFunc}) is difficult, since it needs to determine in which situation the adjacency $\mathbf{p}$ with minimum cost, out of $N^{N-2}$ possible adjacencies \cite{wiki_cayley_alg}, corresponds to the real object class trajectory.
+Now, we analyze the reconstructability of the proposed method. That is, we determine under which conditions the solution of Equation (\ref{equ:costFunc}) generates accurate 3D points. The direct analysis of Eq (\ref{equ:costFunc}) is difficult, since it needs to determine in which situation the adjacency $\mathbf{p}$ with minimum cost, out of $N^{N-2}$ possible adjacencies \cite{wiki_cayley_alg}, corresponds to the real object class trajectory.
 However, we find that having the motion tangent constraint reduces the possibility of finding the incorrect adjacency $\mathbf{p}$. 
-Hence, we focus on  the reconstructability of the continuous method Equation (\ref{equ:costFunc_continuous}) given the adjacency $\mathbf{p}$.
+Hence, we focus on  the reconstructability of the continuous method in Equation (\ref{equ:costFunc_continuous}) given the adjacency $\mathbf{p}$.
 
 Assume we already know the ground truth 3D point $\mathbf{{X}}_i^*$ of object $i$, $i=1,\dots,N$. Given that $\mathbf{{X}}_i^*$ is present on the viewing ray $\mathbf{X}_i$, we move the camera center $\mathbf{C}_i$ to $\mathbf{X}_i^*$ along the ray $\mathbf{X}_i(t)$ in direction $\mathbf{r}_i$. Then any point on the line that passes through $\mathbf{X}_i^*$ and has ray direction $\mathbf{r}_i$ can be represented as $\mathbf{X}_i (s_i)= \mathbf{X}_i^* + s_i \cdot \mathbf{r}_i$, where $s_i$ is the signed distance along the viewing ray (not the positive distance as defined by the $t_i$). Then Equation (\ref{equ:costFunc_continuous}) can be reformulated as
 \begin{equation}
@@ -224,7 +225,7 @@ where $\mathbf{s}=[s_1, \dots, s_N]$. Though $s_i$ is signed distance and $t_i$ 
 We denote the solution of Equation (\ref{equ:costFunc_analysis}) as $\mathbf{s}^\text{opt}$. The true 3D points are ideally reconstructed if $\mathbf{s}^\text{opt}=0$, since $\mathbf{X}_i(0)$ equals to $\mathbf{{X}}_i^*$ given $\mathbf{s}^\text{opt}=0$.
 More specifically, $\mathbf{s}^\text{opt}$ equals the signed Euclidean distance between the 3D points produced by Equation (\ref{equ:costFunc_continuous}) and the ground truth $X_i^*$.
 Therefore, $\|\mathbf{s}^\text{opt}\|$ is the Euclidean error of the estimated 3D points by Equation \ref{equ:costFunc_continuous}.
-In the remaining of this section, we further analyze in which situation $\|\mathbf{s}^\text{opt}\|$ is small to understand the quality of the estimated 3D points. %achieved approximation.
+In the remainder of this section, we further analyze in which situations $\|\mathbf{s}^\text{opt}\|$ is small to better understand the quality of the estimated 3D points. %achieved approximation.
 
 The minimum value of Equation (\ref{equ:costFunc_analysis}) is achieved at the point where the first derivative relative to $\mathbf{s}$ equals 0. This produces a linear equation system $\mathbf{A}\mathbf{s}^\text{opt}= \mathbf{b}$, where the $i$th row and $j$th column of matrix $\mathbf{A}$ is
 \begin{equation}
@@ -232,13 +233,13 @@ A_{ij}= \begin{cases}
 %\mathbf{r}_i\cdot\mathbf{r}_j, & \text{if } (i,j)\in T \text{ and } i\neq j \\
 \lbrack(\mathbf{r}_i\cdot\mathbf{d}_{i,j})\mathbf{d}_{i,j}-(1+\lambda)\mathbf{r}_i\rbrack\cdot\mathbf{r}_j  & \text{if } i\neq j \text{ and } (i,j)\in \mathbf{p}\\
 0, & \text{if } i\neq j \text{ and } (i,j)\notin \mathbf{p}\\
-\sum_{(i,k)\in{\mathbf{p}}}{\lbrack 1+\lambda - (\mathbf{r}_i\cdot\mathbf{d}_{i,k})^2 \rbrack } & \text{if } i=j
+\sum_{(i,k)\in{\mathbf{p}}}{\lbrack 1+\lambda - (\mathbf{r}_i\cdot\mathbf{d}_{i,k})^2 \rbrack } & \text{if } i=j.
 \end{cases}
 \label{equ:A}
 \end{equation}
 The $i$th element of vector $\mathbf{b}$ is
 \begin{equation}
-b_i=\sum\nolimits_{(i,k)\in{\mathbf{p}}}(\mathbf{X}_k^*-\mathbf{X}_i^*)\cdot \lbrack(1+\lambda)\mathbf{r}_i - (\mathbf{r}_i\cdot \mathbf{d}_{i,k})\mathbf{d}_{i,k} \rbrack
+b_i=\sum\nolimits_{(i,k)\in{\mathbf{p}}}(\mathbf{X}_k^*-\mathbf{X}_i^*)\cdot \lbrack(1+\lambda)\mathbf{r}_i - (\mathbf{r}_i\cdot \mathbf{d}_{i,k})\mathbf{d}_{i,k} \rbrack.
 \label{equ:b}
 \end{equation}
 Equation (\ref{equ:A}) and Equation (\ref{equ:b}) have the following interesting properties:
@@ -261,8 +262,9 @@ Equation (\ref{equ:A}) and Equation (\ref{equ:b}) have the following interesting
 \end{figure}
 
 \begin{enumerate}
-\item If $\mathbf{b}$ is 0, $\mathbf{s}^\text{opt}$ equals 0, which means the solution of Equation (\ref{equ:costFunc_continuous}) recovers the ground truth 3D points. There are a few situations  $\mathbf{b}$ equal 0. (1) In the case of a static object $\mathbf{X}_i^* = \mathbf{X}_k^*$, $\mathbf{b}$ equals 0 based on Equation (\ref{equ:b}). (2) Careful observation reveals that if $\lambda$ is set to $0$, in Equation (\ref{equ:b}) the vector $(1+\lambda)\mathbf{r}_i - (\mathbf{d}_{i,k}\cdot \mathbf{r}_i)\mathbf{d}_{i,k}$ is perpendicular to vector $\mathbf{X}_i^*-\mathbf{X}_k^*$ (Figure \ref{fig:b_lambda0}), hence $b_i=0$. However, we will show that with $\lambda=0$, the linear system $\mathbf{A}\mathbf{s}= \mathbf{b}$ is unstable due to the high condition number of matrix $\mathbf{A}$. (3) Furthermore, when $\lambda$ increases from 0, the two vectors slowly deviate from being perpendicular, as shown in Figure \ref{fig:b_lambdaBiggerthan0}. Therefore, $b_i$ is likely to be small if $\lambda$ is close to 0.
-\item Since we can not control 3D positions and there are typically small measurement errors in $\mathbf{d}_{ij}$, $\mathbf{b}$ does not exactly equal to 0. This can be regarded as a small disturbance of $\mathbf{b}$ around $\mathbf{0}$. For the linear system $\mathbf{A}\mathbf{s}^\text{opt}= \mathbf{b}$, one can think of the condition number $\kappa(\mathbf A)$ as being (roughly) the rate at which the solution, $\mathbf{s}^{\text{opt}}$, will change with respect to a change in $\mathbf{b}$. $\kappa(\mathbf A)$ is available as it solely depends on $\mathbf{r}_i$, $\mathbf{d}_{i,j}$ and $\lambda$, but not on the ground truth 3D points $\mathbf{X}^*$. Therefore, we can estimate the reliability of the reconstructed 3D points by computing $\kappa(\mathbf A)$. Moreover, we empirically found that the condition number of matrix $\mathbf{A}$ is inversely related to $\lambda$. The condition number shown in Figure \ref{fig:conditionNum_lamda} is computed using 100 random cameras, and averaged over 200 trials. We can see $\kappa(\mathbf A)$ is large if $\lambda$ is close to 0 and drop dramatically with small $\lambda$. Then $\kappa(\mathbf A)$ decreases monotonically and slowly as $\lambda$ increases. In our experiments, we choose $\lambda=\frac{1}{15}$ as a balance of having good chance of small $\mathbf{b}$ and the stability of the linear system.
+\item If $\mathbf{b}$ is 0, $\mathbf{s}^\text{opt}$ equals 0, which means the solution of Equation (\ref{equ:costFunc_continuous}) recovers the ground truth 3D points. There are a few situations where $\mathbf{b}$ equals 0. (1) In the case of a static object $\mathbf{X}_i^* = \mathbf{X}_k^*$, $\mathbf{b}$ equals 0 based on Equation (\ref{equ:b}). (2) Careful observation reveals that if $\lambda$ is set to $0$, in Equation (\ref{equ:b}) the vector $(1+\lambda)\mathbf{r}_i - (\mathbf{d}_{i,k}\cdot \mathbf{r}_i)\mathbf{d}_{i,k}$ is perpendicular to vector $\mathbf{X}_i^*-\mathbf{X}_k^*$ (Figure \ref{fig:b_lambda0}), hence $b_i=0$. However, we will show that with $\lambda=0$, the linear system $\mathbf{A}\mathbf{s}= \mathbf{b}$ is unstable due to the high condition number of matrix $\mathbf{A}$. (3) Furthermore, when $\lambda$ increases from 0, the two vectors slowly deviate from being perpendicular, as shown in Figure \ref{fig:b_lambdaBiggerthan0}. Therefore, $b_i$ is likely to be small if $\lambda$ is close to 0.
+
+\item Since we can not control 3D positions and there are typically small measurement errors in $\mathbf{d}_{ij}$, $\mathbf{b}$ does not exactly equal to 0. This can be regarded as a small disturbance of $\mathbf{b}$ around $\mathbf{0}$. For the linear system $\mathbf{A}\mathbf{s}^\text{opt}= \mathbf{b}$, one can think of the condition number $\kappa(\mathbf A)$ as being (roughly) the rate at which the solution, $\mathbf{s}^{\text{opt}}$, will change with respect to a change in $\mathbf{b}$. $\kappa(\mathbf A)$ is available because it solely depends on $\mathbf{r}_i$, $\mathbf{d}_{i,j}$ and $\lambda$, but not on the ground truth 3D points $\mathbf{X}^*$. Therefore, we can estimate the reliability of the reconstructed 3D points by computing $\kappa(\mathbf A)$. Moreover, we empirically found that the condition number of matrix $\mathbf{A}$ is inversely related to $\lambda$. The condition number shown in Figure \ref{fig:conditionNum_lamda} is computed using 100 random cameras, and averaged over 200 trials. We can see $\kappa(\mathbf A)$ is large if $\lambda$ is close to 0 and drops dramatically with small $\lambda$. Then, $\kappa(\mathbf A)$ decreases monotonically and slowly as $\lambda$ increases. In our experiments, we choose $\lambda=\frac{1}{15}$ as a balance of having good chance of small $\mathbf{b}$ without decreasing the stability of the linear system.
 \end{enumerate}
 
 \begin{figure}
@@ -282,16 +284,14 @@ In conclusion, if the adjacency $\mathbf{p}$ is correctly found, the reconstruct
 \section{Object Detector and Motion Tangent Estimation}
 \label{sec:face_detection}
 Before presenting our experimental evaluation, we first briefly describe the particular object detector we use in our experiments.
-Single image based object detection is a well studied problem in computer vision with a wide variety of methods readily available~\cite{Zhang2006Local,Dalal2005HOG,lsvm-pami}. Similarly, there is a large number of motion tangent estimation methods in the literature~\cite{Blanz2003face,Gu20063D,jain2010fddb,jones2003fast}.
+Single-image-based object detection is a well studied problem in computer vision with a wide variety of methods readily available~\cite{Zhang2006Local,Dalal2005HOG,lsvm-pami}. Similarly, there is a large number of motion tangent estimation methods in the literature~\cite{Blanz2003face,Gu20063D,jain2010fddb,jones2003fast}.
 %While a combination of those methods would yield the desired detections and motion tangents,
-We opt for leveraging the method that jointly determines the face position and its motion tangent direction~\cite{Xiangxin_CVPR12}.
-%We applied the unified method proposed by Xiangxin \etal \cite{Xiangxin_CVPR12} to jointly detect pedestrian faces and estimate their corresponding motion tangents.
-%The method  models the faces as mixtures of tree structures based on shared facial landmarks. 
+
+For images containing large faces, we opt for leveraging the method that jointly determines the face position and its motion tangent direction~\cite{Xiangxin_CVPR12}.
 In our experiments,
-%a single template is shared for all 99 facial landmark parts across all 13 mixtures.
 the detection threshold is set to $-0.35$ to avoid false detections, as the false alarm may disturb our algorithm. Our chosen detectors provide a motion tangent of object $i$ that is  quantized every $\theta=15^{\circ}$ in the range of $-90^{\circ}$ and $90^{\circ}$.
 
-%To further improve the detection of pedestrians at larger distances we default to a deformable parts
+
 For cars and pedestrians with small faces in the images, we default to the deformable parts
 detector~\cite{lsvm-pami,voc-release5}. %, which could also be used for the detection of cars. %This detector utilizes HOG features.
 We used the pre-trained model with detection threshold $0.35$.
@@ -299,7 +299,7 @@ We used the pre-trained model with detection threshold $0.35$.
 %We used the pre-trained pedestrian model from the INRIA person dataset~\cite{Dalal2005HOG} with detection threshold $0.35$.
 % and the \en{ do we have a car experiment? If not we need to take the car out here} car model from the PASCAL dataset~\cite{pascal-voc-2010} with detection threshold $0.1$.
 %We again chose higher detection thresholds to avoid false positives. Next we will describe the experimental evaluation of our \jost.
-The moving directions of the pedestrians and cars are estimated using the 3D point cloud (output of VisualSFM) of the background wall by assuming the dynamic objects move parallel to the wall. This is normally true in the Manhattan Scene. Some of the detection results are shown in Figure \ref{fig:detection}.
+The motion tangent of the pedestrians and cars are estimated using the 3D point cloud (output of VisualSFM) of the background wall by assuming the dynamic objects move parallel to the wall. This is normally true in Manhattan scenes. Some of the detection results are shown in Figure \ref{fig:detection}.
 
 \begin{figure}[t]
 \centering
@@ -319,7 +319,7 @@ The moving directions of the pedestrians and cars are estimated using the 3D poi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experiments}
 We evaluate our algorithm on both synthetic and real datasets.
-The GMST algorithm used in our method \cite{Ferreira_ESWA2012} searches the hypothesis space, which stops iterations when either the GMST cost is under a preset value, or the run time reaches a preset limit. For all experiments, we use the time limit to stop searching, given the lack of an adequate {\em a priori} approximation of the true  GMST cost for each dataset.
+The GMST algorithm used in our method \cite{Ferreira_ESWA2012} searches the hypothesis space, which stops iterating when either the GMST cost is under a preset value, or the run time reaches a preset limit. For all experiments, we only use the time limit to stop searching, given the lack of an adequate {\em a priori} approximation of the true  GMST cost for each dataset.
 \begin{table}
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}  \hline
@@ -345,13 +345,14 @@ The GMST algorithm used in our method \cite{Ferreira_ESWA2012} searches the hypo
 \label{fig:synthetic}
 \end{figure}
 
-\textbf{Synthetic datasets} Our first experiment uses synthetic data, with six different \oct~shapes on a plane, including a single line path, a T-junction path, a path with two parallel lines, a half circle path, sine wave shaped path, and two crossed path. For each of these shapes, we tested 32 instances, with each containing 50 randomly chosen object observation at different 3D positions. To have a sense of the output errors, we normalize the 3D points so that the average distance between every pair of nearest points equals 1. 
+\textbf{Synthetic datasets}. Our first experiment uses synthetic data, with six different \oct~shapes on a plane, including a single line path, a T-junction path, a path with two parallel lines, a half circle path, a sine-wave-shaped path, and a cross-shaped path. To have a sense of the output errors, we normalize the 3D points so that the average distance between every pair of nearest points equals 1.  
 
-The cameras are randomly generated around the 3D object points with two different configurations. In camera configuration A, all the camera centers stay in the same plane as the 3D points, which is more difficult since each viewing ray may intersect the ground truth path several times. In camera configuration B, the camera centers are set randomly off the plane, with the angle between the viewing ray and the plane being at most $10^\circ$ and camera distance of 2-3 times the length of the path. 
+The virtual cameras are randomly generated around the 3D object points with two different configurations. In camera configuration A, all the camera centers stay in the same plane as the 3D points, which is more difficult since each viewing ray may intersect the ground truth path several times. In camera configuration B, the camera centers are set randomly off the plane, with the angle between the viewing ray and the plane being at most $10^\circ$ and the camera distance being 2-3 times the length of the path. 
 
-We choose $k=100$ uniformly distributed discrete 3D hypotheses $\mathbf{X}_i^o$  along each viewing ray $\mathbf{X}_i$ in a range that contains the ground truth 3D point. The size of the range is set as 1.5 times the length of the path. Notice that while the ground truth 3D points lie in the range, there is no guarantee that it is one of the discrete hypothesis samples $\mathbf{X}_i^o$. %The run time of tGMST algorithm is set 1 hour for each data instance.
+We choose $k=100$ uniformly distributed discrete 3D hypotheses $\mathbf{X}_i^o$  along each viewing ray $\mathbf{X}_i$ in a range that contains the ground truth 3D point. The size of the range is set as 1.5 times the length of the path. Notice that while the ground truth 3D point lie in the range for a given image, there is no guarantee that any of the discrete hypothesis samples $\mathbf{X}_i^o$ will exactly match the true depth. 
 
-Errors are measured using the Euclidean distance between the estimated 3D points and the ground truth. The average errors over the 32 instances for each shape category are listed in Table \ref{fig:syntheticDataResult}. We report errors of the GMST output, and the errors after the continuous refinement using Equation (\ref{equ:costFunc_continuous}).  Table \ref{fig:syntheticDataResult} shows our  continuous refinement always improves the reconstruction accuracy over the GMST approximation.  The results demonstrate    {\it off-plane} cameras yield improved results than {\it in-plane}  cameras  for  complex paths (e.g. crossed paths), due to the multiplicity of ray-to-path intersections. In these cases, the GMST solution has a more complex search space and yields a sub-optimal solution. However, the condition number of the linear system does not vary significantly across configurations. Figure \ref{fig:synthetic} shows the estimated 3D points overlaid onto the ground truth.
+Errors are measured using the Euclidean distance between the estimated 3D points and the ground truth. We run 32 instances for each shape with randomly generated virtual cameras.
+The average errors over the 32 instances for each shape category are listed in Table \ref{fig:syntheticDataResult}. We report both the errors of the GMST output and the errors after the continuous refinement using Equation (\ref{equ:costFunc_continuous}).  Table \ref{fig:syntheticDataResult} shows our  continuous refinement always improves the reconstruction accuracy over the GMST approximation.  The results demonstrate    {\it off-plane} cameras yield improved results than {\it in-plane}  cameras  for  complex paths (e.g. crossed paths), due to the multiplicity of ray-to-path intersections. In these cases, the GMST solution has a more complex search space and yields a sub-optimal solution. However, the condition number of the linear system does not vary significantly across configurations. Figure \ref{fig:synthetic} shows the estimated 3D points overlaid onto the ground truth.
 
 \begin{figure}
 \centering
@@ -367,9 +368,9 @@ Errors are measured using the Euclidean distance between the estimated 3D points
 \caption[Example reconstruction results on two real datasets.]{Two views for each of the reconstructed results.}
 \label{fig:reconstructed}
 \end{figure}
-\textbf{Real datasets} We evaluate our method on two image datasets  registered by VisualSFM \cite{WuVSFM}. The detection confidence threshold  is set high in order to lower down the false alarm rate. However, a very small amount of false alarms are purged manually as it may affect the reconstruction.  We sample 100 samples along the viewing ray in the range $[0,far]$, where $far$ is  estimated using the model scale. The run time for each object class trajectory is set to 3 hours.
+\textbf{Real datasets}. We evaluate our method on two image datasets  registered by VisualSFM \cite{WuVSFM}. The detection confidence threshold  is set high in order to decrease the false alarm rate. However, a very small amount of false alarms were purged manually, as they may affect the reconstruction.  We sample 100 samples along the viewing ray in the range $[0,far]$, where $far$ is  estimated using the model scale. The run time for each object class trajectory is set to 3 hours.
 
-The first dataset captures random pedestrians walking on the sidewalk, and random cars running on a lane. It contains 135 images with 82 valid car detections and 137 valid pedestrian detections. The scene and the reconstructed object class trajectory are shown in Figure \ref{fig:franklin_Recon}. %and the images are taken on the other side of the street at different time.
+The first dataset captures random pedestrians walking on a sidewalk, plus random cars driving on an adjacent road. It contains 135 images with 82 valid car detections and 137 valid pedestrian detections. The scene and the reconstructed object class trajectory are shown in Figure \ref{fig:franklin_Recon}. %and the images are taken on the other side of the street at different time.
 The second dataset captures several people who are walking on a T-junction shaped path at the corner of a building. It contains 47 images with 66 valid detections. Using the camera positions, we convert the face directions into the global coordinate system to obtain the motion tangents $\mathbf d_i$ of the moving people. For illustration, we construct the background static scene using CMPMVS \cite{JAN}. The general 3D human and car mesh models are inserted into each of the estimated 3D positions. We show different views of the reconstructed results in Figure \ref{fig:reconstructed}.
 
 \begin{figure}
@@ -393,12 +394,12 @@ The second dataset captures several people who are walking on a T-junction shape
 \includegraphics[width=0.33\textwidth]{chapter4/resource/Frame_086_crop.jpg}\\
 \tabucline[2pt]{-}
 \end{tabu}
-\caption[Illustration of pedestrian reconstruction results.]{The left row: an aerial image showing the scene and a figure showing the cameras and reconstructed cars and pedestrians. The bottom four rows: four pedestrian detections (shown in yellow rectangles) and the poses of the corresponding cameras. These four pedestrians are adjacent in the reconstructed object class trajectory. Notice that the second and the third images are the same image but with different detections.}
+\caption[Illustration of pedestrian reconstruction results.]{Top row: An aerial image showing the scene and a figure showing the cameras and reconstructed cars and pedestrians. Bottom four rows: Four pedestrian detections (shown in yellow rectangles) and the poses of the corresponding cameras. These four pedestrians are adjacent in the reconstructed object class trajectory. Notice that the second and the third images are the same image but with different detections.}
 \label{fig:franklin_Recon}
 \end{figure}
 
 \section{Conclusion}
 We target the problem of reconstructing the 3D positions of dynamic objects from a set of unordered images, with the assumption that the objects of the same class move in a common path in the scene. 
-We propose a framework of joint object class sequencing and trajectory triangulation, and solve the associated non-convex optimization problem through a new discrete-continuous optimization scheme based on the generalized minimum spanning tree (GMST).
-The promising results on synthetic and real datasets demonstrate the solvability of the difficult problem and effectiveness of our approach.
+We propose a framework of joint object class sequencing and trajectory triangulation and solve the associated non-convex optimization problem through a new discrete-continuous optimization scheme based on the generalized minimum spanning tree (GMST).
+The promising results on synthetic and real datasets demonstrate the solvability of the difficult problem and the effectiveness of our approach.
 

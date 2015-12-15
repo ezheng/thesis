@@ -272,7 +272,7 @@ Our choice of using propagation direction specific chain models was driven by co
 The proposed framework enables us to easily interleave the propagation with hidden variable inference while fostering implementation  parallelism.
 The enforcement of smoothness constraints on the hidden variables  enables non-oscillating behavior of our evolving depth estimates.
 Our PatchMatch based  framework has linear computational and storage complexity \wrt to input data size while being independent of the size of the depth search space.
-Namely, since the number of tested depth hypotheses (3 for each propagation) is small and constant, the computation complexity of our method is $O(W H M)$, where $W$, $H$, and $M$ are the width, height and  number of images.  Methods using complete hypotheses search, e.g. \cite{Sun_ECCV2002_stereoBeliefProp, CombinedDepthOutlier}, require  $O(W H M D)$ computations, where D is the size of hypotheses space
+Namely, since the number of tested depth hypotheses (3 for each propagation) is small and constant, the computation complexity of our method is $O(W H M)$, where $W$, $H$, and $M$ are the width, height and  number of images.  Methods using complete hypotheses search, (e.g. \citet{Sun_ECCV2002_stereoBeliefProp, CombinedDepthOutlier}), require  $O(W H M D)$ computations, where D is the size of hypotheses space
 %, which is a tradeoff between computation complexity and precision,
 normally reaching up to thousands of hypotheses.
  

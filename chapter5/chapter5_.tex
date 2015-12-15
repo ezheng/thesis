@@ -842,12 +842,12 @@ Given the camera poses, we use the block matrix method proposed in the work by \
 \begin{equation}
 \allX^\# = 
 \begin{bmatrix}
-X_{(1,1)}& \dots& X_{(P,1)} & Y_{(1,1)}& \dots& Y_{(P,F)} & Z_{(1,1)}& \dots& Z_{(P,F)} \\
+\mathtt{X}_{(1,1)}& \dots& \mathtt{X}_{(P,1)} & \mathtt{Y}_{(1,1)}& \dots& \mathtt{Y}_{(P,F)} & \mathtt{Z}_{(1,1)}& \dots& \mathtt{Z}_{(P,F)} \\
 \vdots   &  				& \vdots   & \vdots 		  & \vdots   & \vdots			  \\
-X_{(1,F)}& \dots& X_{(P,F)} & Y_{(1,F)}& \dots& Y_{(P,F)} & Z_{(1,1)}& \dots& Z_{(P,F)}\nonumber		  
+\mathtt{X}_{(1,F)}& \dots& \mathtt{X}_{(P,F)} & \mathtt{Y}_{(1,F)}& \dots& \mathtt{Y}_{(P,F)} & \mathtt{Z}_{(1,1)}& \dots& \mathtt{Z}_{(P,F)}\nonumber		  
 \end{bmatrix},
 \end{equation}
-where $\mathbf{X}_{(p,f)} = (X_{(p,f)},Y_{(p,f)},Z_{(p,f)})$, the shape of the object can be recovered through 
+where $\mathbf{X}_{(p,f)} = (\mathtt{X}_{(p,f)},\mathtt{Y}_{(p,f)},\mathtt{Z}_{(p,f)})^\text{T}$, the shape of the object can be recovered through 
 \begin{equation}
 \begin{aligned}
 & \underset{\allX^\#, \allT}{\text{minimize}} &&
