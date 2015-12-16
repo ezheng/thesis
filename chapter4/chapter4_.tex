@@ -2,16 +2,8 @@
 
 \section{Introduction}
 
-Techniques of 3D reconstruction from crowd-sourced imagery have developed rapidly over the past decades. %, enabling systems to build 3D models from millions of images \cite{agarwal2011building,Frahm2010,zheng2014patchmatch,Heinly}. 
-Despite these advances, the state-of-the-art methods only target the static part of a scene, but fail on the dynamic part. Since dynamic objects are typically the major focus of real-life images, it is of great interest to recover the 3D information of these dynamic objects to enable further applications.
-
-In this work, we propose a method to estimate the 3D positions of dynamic objects of the same class moving in a common path given a set of unstructured images as input. 
-Figure \ref{fig:franklin_imgs} shows example input images in a dateset that captures the pedestrians walking on the sidewalk. We assume no temporal correlation among the images, and that each dynamic object instance may be observed by only one image. 
-The main challenge of the reconstruction problem resides in the fact of non-current captures of the dynamic objects, which invalidates the traditional 3D triangulation. 
-The only constraint available for our problem is the fact that all observed instances of an object class move along a common compact path in the 3D scene, which we define as an object class trajectory. For instance, all the pedestrian instances walking on the sidewalk form an object class trajectory of pedestrians.
-
-In this chapter, we define the sequence of the objects along the trajectory as sequencing information, which can also be regarded as the topology of the trajectory. This sequencing information encodes the spatial proximity of the dynamic objects in 3D space, which is vital in triangulating the object class trajectory.
-To attain the object class trajectory, our method simultaneously determines the sequencing information of the objects and their 3D positions on the path, which we call joint object class sequencing and trajectory triangulation. We leverage all the observations on different images to recover the object class trajectory, and then it gives the 3D positions of the dynamic objects.
+Techniques of 3D reconstruction from crowd-sourced imagery have developed rapidly over the past decades \cite{agarwal2011building,Frahm2010,zheng2014patchmatch,Heinly}. 
+Despite these advances, the state-of-the-art methods only target the static parts of a scene, treating the dynamic elements as hindrances to reconstruction. Since dynamic objects are typically the major focus of real-life images, recovering their 3D information enables applications such as better scene visualizations and dynamic event analysis. Therefore, it is of great interest to reconstruct these dynamic objects.
 
 \begin{figure}
 \centering
@@ -26,19 +18,36 @@ To attain the object class trajectory, our method simultaneously determines the 
     \includegraphics[height=0.33\linewidth]{chapter4/resource/3DModel.png}
     \label{fig:FranklinSingleViewRecon}
     }
-\caption[Example input and output of JOST.]{Left: 3 images of the pedestrian dataset and the output of SFM. Right: The reconstruction of two pedestrians that are captured in the single image. Note we only reconstruction one 3D position for each dynamic object instance. For visualization purposes, a general mesh model is inserted into each estimated position.}
+\caption[Example input and output of JOST.]{Left: Tree images of the pedestrian dataset and the output of structure from motion. Right: Estimated 3D positions of two pedestrians that are captured in the image. Note we only reconstruct one 3D position for each dynamic object instance instead of a dense 3D model. For visualization purposes, a general mesh model is inserted into each estimated position.}
 %\end{subfigure}
 %\label{fig:gmst}
 \vspace*{-0.5cm}
 \end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[width=0.65\linewidth]{chapter4/resource/path_cropped.pdf}
+\caption[Example of cross-shaped object class trajectory.]{Example of cross-shaped object class trajectory. The circles of different colors represent object instances of the same object class in the path. Note the topology of the trajectory is tree-structured. Each image only observes one or a few object instances, and we use all the observations to recover the object class trajectory.}
+\label{fig:oct_example}
+\end{figure}
+
+In this work, we propose a method to estimate the 3D positions of dynamic objects of the same class moving in a common path given a set of unstructured images as input. 
+Figure \ref{fig:franklin_imgs} shows example input images in a dateset that captures  pedestrians walking on a sidewalk. We assume no temporal correlation among the images, and that no two images observe the same dynamic object instance. 
+The main challenge of the reconstruction problem resides in recovering 3D positions given  non-current captures (or even single observations) of the dynamic objects, which invalidates the use of traditional 3D triangulation. The only constraint available for our problem is the fact that all observed instances of an object class move along a possibly diverging path in the 3D scene, which we define as an object class trajectory.
+Figure \ref{fig:oct_example} shows one example of object class trajectory.
+
+In this chapter, we define the spatial ordering of the objects along the trajectory as sequencing information. If the trajectory is modeled as a graph, this information can also be regarded as the topology of the trajectory. This sequencing information captures the spatial proximity of the dynamic objects in 3D space, and therefore triangulating the object class trajectory necessarily involves learning a trajectory topology.
+To recover the object class trajectory, our method simultaneously determines the sequencing information of the objects and their 3D positions on the path, which we call joint object class sequencing and trajectory triangulation (JOST). We leverage all the observations on different images to recover the object class trajectory, which in turn provides an estimate for the 3D positions of the dynamic objects in each image (see Figure \ref{fig:FranklinSingleViewRecon}).
+
+
+
 \section{\JOST}
 
 We now detail our method for joint object class sequencing and trajectory triangulation from unstructured images. 
 %, which in particular removes the constraint of known temporal camera information and known object positions.
-Our method includes three steps as described below.
+Our method includes three steps:
 \begin{enumerate}
-\item \label{challenges_sfm} Spatially register the cameras to a common 3D coordinate system.
+\item \label{challenges_sfm} Spatially register the cameras to a common 3D coordinate system using structure from motion (SfM).
 \item \label{challenges_tang} Detect object instances and estimate motion tangents from input imagery as the 2D observations of the dynamic objects.
 \item \label{challenges_order} Leverage the observations of the object instances to simultaneously
 \begin{enumerate}
@@ -47,24 +56,24 @@ Our method includes three steps as described below.
 \end{enumerate}
 
 \end{enumerate}
-While we exploit known methods to solve for camera registration, object detection and motion tangents in the images, our main contribution is an algorithm for tackling challenge  \ref{challenges_order}. To tackle this challenge, we model our problem as a non-convex optimization problem, and develop a novel solver comprising a step of discrete optimization followed by another step of continuous refinement. 
+While we exploit known methods to solve for camera registration, object detection, and motion tangents in the images, our main contribution is an algorithm for tackling challenge  \ref{challenges_order}. To this end, we model our problem as a nonconvex optimization problem, and develop a novel solver involving a step of discrete optimization followed by another step of continuous refinement. 
 Next, we introduce our system in detail.
 
 \subsection{Spatial Registration}
 The goal of the initial spatial registration in our method is to establish camera registration in a common coordinate system.
-%There exists a large body of possible registration methods in structure from motion that can be used to register the cameras into a common coordinate system.
 Given that in all our datasets a fair portion of the images contains static background structures, we use the publicly available structure from motion tool VisualSFM  \cite{WuVSFM} to register all the cameras. See Figure \ref{fig:franklin_sfm} for an example.
 
-The obtained camera registration determines the camera center $\mathbf{\tilde{C}}_j$ of the $j$-th camera. In this work, we use a bold font letter for a vector and a regular letter for a scalar value. 
+The obtained camera registration determines the camera center $\mathbf{\tilde{C}}_j$ of the $j$-th camera. 
 With known camera parameters, each pixel in a camera defines a viewing ray with direction $\mathbf{r}$ in the 3D scene space. For our object class trajectory, we are only interested in the ray direction $\mathbf r_i$ associated with the object instance $i$ of the desired class (for simplicity we refer to them as objects), where  $i =1, \dots, N$, and $N$ is the total number of detected objects over all frames. %Hence, we only aim to compute the ray direction $\mathbf{r}_i$ for pixels belonging to  the detected object $i$. 
-The ray $\mathbf{X}_i$ in the 3D space represents a 1D subspace on which the imaged object has to lie and is described by:
+The ray $\mathbf{X}_i(t_i)$ in the 3D space represents a 1D subspace on which the imaged object has to lie and is described by
 \begin{equation}
 \label{eq:ray}
-\mathbf{X}_i(t_i)=\mathbf{C}_i + t_i \cdot \mathbf{r_i},
+\mathbf{X}_i(t_i)=\mathbf{C}_i + t_i \mathbf{r}_i,
 \end{equation}
-where $t_i \geq 0$ is the positive distance from the camera center $\mathbf{C}_i$ along the ray $\mathbf{X}_i$.
-In the remaining of the work, we keep the condition $t_i \geq 0$ implicit for the purpose of concise formulation.
-We denote the camera center as $\mathbf{C}_i$  with $\mathbf{C}_i =\mathbf{\tilde{C}}_j$, where $\mathbf{C}_i$ is the center of the camera $j$ in which the object instance $i$ is detected. Note that if more than one object is detected in camera $j$, there will be multiple $\mathbf{C}_i$ with identical positions. The unknown true distance of the object instance $i$ along ray $\mathbf{X}_i$ is denoted as $\hat{t}_i$. Once obtained, it determines the 3D object position $\mathbf{\hat{X}}_i$. %Next we turn to detail our object class instance detection and the motion tangent estimation.
+where $t_i \geq 0$ is the positive distance from the camera center $\mathbf{C}_i$ along the ray $\mathbf{X}_i(t_i)$.
+In the following, we implicitly assume the condition $t_i \geq 0$.
+We denote the camera center associated with an object instance $i$ as $\mathbf{C}_i$  with $\mathbf{C}_i =\mathbf{\tilde{C}}_j$, where $\mathbf{\tilde{C}}_j$ is the center of the camera $j$ in which the object instance $i$ is detected. This means if more than one object is detected in camera $j$, there will be multiple $\mathbf{C}_i$ with identical positions. Once we obtain the value for $t_i$, the object position can be uniquely determined. 
+%The unknown true distance of the object instance $i$ along ray $\mathbf{X}_i$ is denoted as $\hat{t}_i$. Once obtained, it determines the 3D object position $\mathbf{\hat{X}}_i$. %Next we turn to detail our object class instance detection and the motion tangent estimation.
 
 
 \subsection{Object Detection and Motion Tangent Estimation}
@@ -73,40 +82,34 @@ We denote the camera center as $\mathbf{C}_i$  with $\mathbf{C}_i =\mathbf{\tild
 Our proposed method leverages object detection techniques to determine the 2D observations of the dynamic objects. We identify one 2D position of each detected object  on the image by the center of the detection bounding box. These object detections provide us the viewing rays where the dynamic objects are placed. 
 
 To robustly perform joint object class sequencing and trajectory triangulation, our proposed method also uses the motion tangent of each object, which is defined as the moving direction of the dynamic object in the 3D space. 
-The motion tangent estimation has been solved by using videos \cite{zhao2003face}, but  in the absence of temporal coherence or temporal proximity among the images, our method estimate the motion tangent based on a single image.
+The problem of motion tangent estimation has been solved for videos \cite{zhao2003face}, but  in the absence of temporal coherence among the images, our method need to estimate the motion tangent based on a single image.
 
-The particular choice of object detection and motion tangent estimation methods depends on the specific object class and the scenes.
-We discuss our choices in Section \ref{sec:face_detection}, and for now we assume available 2D observation on each image defining the ray $\mathbf{X}_i$ and a coarse estimate of the motion tangent $\mathbf{d}_i$ of object $i$.
-
-%quantized every $\theta^{\circ}$ between $-90^{\circ}$ and $90^{\circ}$. 
-%In the following 
-%i.e. if the object is determined to be present in a connected component of the image, we represent its position through the center of gravity of that region.
-%This simplifies the object class trajectories to the trajectory of a single characteristic object point. While in general this has the potential of slightly disturbing the trajectory, we empirically found that does not introduce any significant disturbance.
-%Next %we will describe how the rays $\mathbf{X}_i(t_i)$ and the motion tangents of
-%the objects are leveraged to compute the object class trajectory.
-
+The particular choice of object detection and motion tangent estimation methods depends on the specific object class and the scenes. We discuss our choices in Section \ref{sec:face_detection}, and for now we assume we have at our disposal the 2D observation  defining the ray $\mathbf{X}_i(t_i)$, as well as a coarse estimate of the motion tangent $\mathbf{d}_{i}$ for each object $i$.
 
 \subsection{Object Class Trajectory Triangulation}
 \label{sec:problem}
-Assuming known rays $\mathbf{X}_i(t_i)$ and the motion tangents $\mathbf{d}_{i}$, we now define the object class trajectory estimation problem before delving into our data representation and our estimation framework. For the ease of description, we directly leverage the rays $\mathbf{X}_i(t_i)$ of the detected objects $i$ and do not use the camera registration directly as the latter is implicitly present in the ray.
+Assuming known viewing rays $\mathbf{X}_i(t_i)$ and the motion tangent $\mathbf{d}_{i}$, we now define the object class trajectory estimation problem before delving into our data representation and our estimation framework. For ease of description, we directly leverage the viewing rays $\mathbf{X}_i(t_i)$ of the detected objects $i$ and thereby implicitly use the camera parameters and the 2D observations.
 
-Intuitively, an object class trajectory describes the motion along a path taken by the observed objects of the desired class through the 3D scene. A path can in general be any continuous curve in the 3D scene. Since we only have a finite number of observations of objects along the path, we only sample a discrete set of 3D points on the path. The samples along the path are the 3D object positions $\mathbf{\hat{X}}_i$. Here, we represent the path as a combination of piecewise linear functions in between the sampled object positions $\mathbf{\hat{X}}_i$.
+For a particular class of objects, an object class trajectory describes a path taken by the dynamic objects of the desired class through the 3D scene. Since we only have a finite number of observations of objects along the path, we only sample a discrete set of 3D points on the path,
+and the combination of piecewise linear functions between the true object positions $\mathbf{{X}}_i^*$  represents the object class trajectory.
 %, but in general any parametric representation of the path can be chosen.
-The desired object class trajectory is the path of minimal length and it can be determined through a minimization of the cost function
+%The desired object class trajectory is the path of minimal length and it can be determined through a minimization of the cost function
+
+An important principle for obtaining an object class trajectory is that sampling along a path results in a collection of spatially adjacent points. A trajectory should therefore connect all observed points in such a way that total (spatial) traversal between the points is minimized. We formulate this as a minimization of the following cost function:
+
 \begin{equation}
 \label{eq:pathsimple}
-\underset{\mathbf{p}} { \min  }\sum_{(i,j)\in\mathbf{p}}{\|\mathbf{\hat{X}}_i-\mathbf{\hat{X}}_j\|_2^2},
+\underset{\mathbf{p}} { \min  }\sum_{(i,j)\in\mathbf{p}}{\|\mathbf{X}^*_i-\mathbf{{X}}_j^*\|_2^2}.
 \end{equation}
-with $\mathbf{p}$ representing the adjacency of the points defining the topology of the path, which is list of adjacency relationships between all the points $\mathbf{\hat{X}}_i$, $i=1, \dots, N$. 
+here $\mathbf{p}$ defines the topology spanning the path with minimum cost, given as a list of adjacency relationships between all the points $\mathbf{X}_i^*$, $i=1, \dots, N$. 
 
-While the trajectory above is based on the observed 3D object positions $\mathbf{\hat{X}}_i$, we can only observe the rays $\mathbf{X}_i(t_i)$. To determine the \oct, we also need to determine the position of each object $i$ along its viewing ray $\mathbf{X}_i(t_i)$, which defines the 3D position of the object $\mathbf{\hat{X}}_i$.
-We propose to find the adjacency relation by optimizing over variables $\mathbf{t}=[ t_1, \dots, t_N ]$ and $\mathbf{p}$ jointly as follows,
-%For a set of rays  $\mathbf{X}_i(t_i)$ with $i=1, \dots, N$, the points are determined by the distances $ \mathbf{t}=[ t_1, \dots, t_N ]$. Hence, the optimization from  Equation (\ref{eq:pathsimple}) can be reformulated:
+While the trajectory above is based on the ground truth 3D object positions $\mathbf{X}_i^*$, we can only observe the rays $\mathbf{X}_i(t_i)$. To recover the object class trajectory, we also need to determine the position of each object $i$ along its viewing ray $\mathbf{X}_i(t_i)$.
+We propose to find the adjacency relation by optimizing over variables $\mathbf{t}=[ t_1, \dots, t_N ]$ and $\mathbf{p}$ jointly as
 \begin{equation}
 \label{eq:pathsimpleray}
 \underset{\mathbf{p},\mathbf{t}} { \text{min} }\sum_{(i,j)\in\mathbf{p}}{\|\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)\|_2^2}. \\
 \end{equation}
-Given the motion tangents $\mathbf d_i$ estimated from the images, we can further constrain the trajectory, obtaining an optimization problem:
+To robustly recover both $\mathbf{t}$ and $\mathbf{p}$ simultaneously, we further leverage the information of motion tangent. The direction of the local trajectory should be the same or similar to the motion tangent of the dynamic objects. Given the motion tangents $\mathbf d_i$ estimated from the images, we can further constrain the trajectory, obtaining an optimization problem:
 \begin{equation}
 \label{equ:costFunc}
 \underset{\mathbf{p},\mathbf{t}} { \text{min} }
@@ -114,36 +117,47 @@ Given the motion tangents $\mathbf d_i$ estimated from the images, we can furthe
 %\nonumber
 %\text{with } \mathbf{X_i}=\mathbf{C_i} + t_i \cdot \mathbf{r_i}  ,\quad t_i \geq 0, \quad i =1,2,...N
 \end{equation}
-where the operator $\times$ is the vector cross product, $\lambda$ is a positive weight (discussed at length in Sec. \ref{sec:analysis}). The direction $\mathbf{d}_{i,j}$ is selected from $\mathbf{d}_i$ and $\mathbf{d}_j$, as the motion tangent that is closest to the 3D motion direction $\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)$.
-In Equation (\ref{equ:costFunc}), the penalty of the first term increases if the direction of the vector $\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)$ deviates from $\mathbf{d}_{i,j}$.
-The optimization procedure simultaneously determines both the adjacency $\mathbf{p}$ and the positions of the objects through $\mathbf{t}$.
+where the operator $\times$ is the vector cross product, and $\lambda$ is a positive weight (discussed at length in Section \ref{sec:analysis}). The direction $\mathbf{d}_{i,j}$ is selected from $\mathbf{d}_i$ and $\mathbf{d}_j$ as the motion tangent that is closest to the 3D motion direction $\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)$.
+The first cost term in Equation (\ref{equ:costFunc}) adds the penalization if the local direction of the recovered trajectory deviates from the motion tangent.
+% In Equation (\ref{equ:costFunc}), the penalty of the first term increases if the direction of the vector $\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)$ deviates from $\mathbf{d}_{i,j}$. 
+The optimization procedure simultaneously determines both the adjacency $\mathbf{p}$ and the object positions through $\mathbf{t}$.
 
-Traditionally, these problems have been treated separately as either a sequencing problem,
-%\en{add a couple of references. Jan, I do not know about this. we can discuss tomorrow. There are actually works  \cite{Basha_ECCV2012}and \cite{Basha_ICCV2013} doing image sequencing. But those paper does not have 3D points available. I think given dynamic 3D points, doing the sequencing is trivial.}
-where the 3D points are given and only the sequence of traversal needs to be estimated, or as a trajectory triangulation problem \cite{Park_ECCV2010,Valmadre_CVPR2012}, where the sequence of observations for the trajectory is given and the 3D points along the trajectory need to be determined. Our proposed method generalizes these problems into a common framework to allow the simultaneous estimation of the adjacency of observations and the 3D position of the observations. %After defining the cost function (Equation (\ref{equ:costFunc})) for the optimization problem to determine the object class trajectory,
-Optimization of the non-convex function in Equation (\ref{equ:costFunc}) is inherently difficult. To achieve this, we propose a new discrete-continuous  optimization strategy through the generalized minimum spanning tree (GMST).
+%Traditionally, these problems have been treated separately as either a sequencing problem, where the 3D points are given and only the sequence of traversal needs to be estimated, or as a trajectory triangulation problem \cite{Park_ECCV2010,Valmadre_CVPR2012}, where the sequence of observations for the trajectory is given and the 3D points along the trajectory need to be determined. 
+%Our proposed method generalizes these problems into a common framework to allow for the simultaneous estimation of the adjacency of the trajectory and the 3D position of the observations. %After defining the cost function (Equation (\ref{equ:costFunc})) for the optimization problem to determine the object class trajectory,
+Optimization of the non-convex function in Equation (\ref{equ:costFunc}) is inherently difficult. To achieve this, we propose a new discrete-continuous  optimization strategy using a generalized minimum spanning tree (GMST).
 
 \subsection{Generalized Trajectory Graph}
 \begin{figure}[t]
 \centering
-    \includegraphics[width=1\columnwidth]{chapter4/resource/gmst_eccv.pdf}
+\subfloat[Discretization of viewing ray]{
+   \includegraphics[height=0.33\columnwidth]{chapter4/resource/1_pdfsam_gmst_eccv_cropped.pdf}
+   \label{fig:discrete_pts}
+}
+\subfloat[Multi-partite graph instance]{
+   \includegraphics[height=0.33\columnwidth]{chapter4/resource/2_pdfsam_gmst_eccv_cropped.pdf}
+   \label{fig:multi_partite_graph}
+}
+\subfloat[Estimated 3D trajectory]{
+   \includegraphics[height=0.33\columnwidth]{chapter4/resource/3_pdfsam_gmst_eccv_cropped.pdf}
+   \label{fig:estimated_trajectory}
+} 
 \caption[Illustration of the generalized minimum spanning tree (GMST)]{Illustration of GMST. See the text for more details.}
 %\end{subfigure}
 \label{fig:gmst}
 \end{figure}
 
 \label{sec:gmst}
-To determine the \oct, we conceptually have to choose for each ray $\mathbf{X}_i(t_i) $ the 3D point, and simultaneously determine the adjacency $\mathbf{p}$ representing the adjacency relations of the rays $\mathbf{X}_i(t_i) $, which defines the topology of the \oct.
-Our discrete-continuous optimization strategy first uses a generalized minimum spanning tree (GMST) to find adjacency $\mathbf{p}$, and followed by a convex optimization over $\mathbf{t}$ with $\mathbf{p}$ being fixed.
+To determine the object class trajectory, we conceptually have to choose for each ray $\mathbf{X}_i(t_i)$ the 3D point, and simultaneously determine the adjacency $\mathbf{p}$ representing the adjacency relations of the rays $\mathbf{X}_i(t_i)$, which defines the topology of the object class trajectory.
+Our discrete-continuous optimization strategy first uses a generalized minimum spanning tree (GMST) to find the adjacency list $\mathbf{p}$, and followed by a convex optimization over $\mathbf{t}$ with $\mathbf{p}$ being fixed.
 
-In the discrete optimization step, we map the continuous problem of finding the 3D point along each ray to a discrete problem of selecting a 3D point out of a set of discrete 3D points. Then we determine one 3D point along each ray and the adjacency $\mathbf{p}$ by computing the GMST on an undirected multipartite graph $\cal{G}(V,E)$~\cite{MyungLT_95}. This allows us to simultaneously  determine the topology and the discrete 3D object positions.
+In the discrete optimization step, we map the continuous problem of finding the 3D point along each ray to a discrete problem of selecting a 3D point out of a set of discrete 3D points (see Figure \ref{fig:discrete_pts}). Using this formulation, we determine one 3D point along each ray and the adjacency $\mathbf{p}$ by computing the GMST on an undirected multipartite graph $\cal{G}(V,E)$~\cite{MyungLT_95}. This allows us to simultaneously  determine the topology and the discrete 3D object positions.
 
-An undirected multipartite graph is a graph $\cal{G}(V,E)$ whose vertices are partitioned into $N$ partite sets $\left\{V_1, \dots, V_N\right\}$ with $\vert V_i \vert = k$, while fulfilling ${\cal V}=V_1 \cup V_2 \cup \dots \cup V_N$ and $V_o \cap V_p = \emptyset, \forall o\neq p$, with $o,p \in \{1, \dots, N \}$. The multipartite graph $\cal{G}(V,E)$ has only edges between the different partite sets of vertices $V_o$, and all edge costs are non-negative. Next, we will explain on how we define the graph $\cal{G}(V,E)$ based on Equation \ref{equ:costFunc}.
+An undirected multipartite graph is a graph $\cal{G}(V,E)$ whose vertices are partitioned into $N$ partite sets $\left\{V_1, \dots, V_N\right\}$ with $\vert V_i \vert = k$, while fulfilling ${\cal V}=V_1 \cup V_2 \cup \dots \cup V_N$ and $V_o \cap V_p = \emptyset, \forall o\neq p$, with $o,p \in \{1, \dots, N \}$. The multipartite graph $\cal{G}(V,E)$ has only edges between the different partite sets of vertices $V_o$, and all edge costs are non-negative (see Figure \ref{fig:multi_partite_graph} for an example). Next, we will explain on how we define the graph $\cal{G}(V,E)$ based on Equation \ref{equ:costFunc}.
 
-Each ray $\mathbf{X}_i(t)$ defines a one dimensional constraint on the 3D position of the object. We discretize the ray to obtain a discrete set of potential depth estimates. This leads to a finite set of possible 3D positions along the ray (see Figure \ref{fig:gmst}(a) for an illustration), defining a finite set of 3D point hypotheses %$\mathbf{\hat{X}}_i^o=\mathbf{X}_i (\hat{t}_o)$ with $\vert t_o \vert = k$,
-$\{\mathbf{\hat{X}}_i^o|o=1,\dots,k \}$,
+Each ray $\mathbf{X}_i(t_i)$ defines a one dimensional constraint on the 3D position of the object. We discretize the ray to obtain a discrete set of potential depth estimates. This leads to a finite set of possible 3D positions along the ray (see Figure \ref{fig:discrete_pts} for an illustration), defining a finite set of 3D point hypotheses 
+$\{\mathbf{\hat{X}}_i^o~|~o=1,\dots,k \}$,
 where $k$ is the number of the discrete hypotheses along the ray.
-In our representation, each 3D point $\mathbf{\hat{X}}_i^o$ establishes a node $V_i^o$ in the graph. The set of nodes $\{V_i^o|o=1, \dots, k\}$ related to the ray $\mathbf{X}_i(t)$ of object $i$ defines a partite set of nodes $V_i$ in the graph $\cal{G}(V,E)$. 
+In our representation, each 3D point $\mathbf{\hat{X}}_i^o$ establishes a node $V_i^o$ in the graph. The set of nodes $\{V_i^o~|~o=1, \dots, k\}$ related to the ray $\mathbf{X}_i(t_i)$ of object $i$ defines a partite set of nodes $V_i$ in the graph $\cal{G}(V,E)$. 
 Given that no nodes within a group have any connecting edges, the resulting multipartite graph will contain no edges between the different depth hypotheses of object $i$.
 %it enforces the traversal of the graph to be constrained among partite sets. 
 %This is  consistent with the understanding of moving the different instances of an object class in the scene to determine the object class trajectory.
@@ -151,13 +165,12 @@ Given that no nodes within a group have any connecting edges, the resulting mult
 We now define the edge cost of the multipartite graph based on Equation (\ref{equ:costFunc}).
 The multipartite graph only has edges between the nodes from different partite sets.
 %Given the properties of the multipartite graph we only insert edges between the nodes that are in different partite sets of nodes.
-We define the edge direction $\mathbf{d}_{i,j}$ between any two nodes $V_i^o$ and $V_j^p$ in the partite set $i$ and partite set $j$, respectively, as the consistency of the 3D motion with the motion tangents $\mathbf d_i$ and $\mathbf d_j$ (see Sec. \ref{sec:detection}). This definition comes from the intuition that the edge direction should be compliant with the motion tangent observed in the images. Given the motion of two objects $i$ and $j$ and their respective motion tangents $\mathbf d_i$ and $\mathbf d_j$, it is clear that the motion between the points $\mathbf{X}_i^o$ and $\mathbf{X}_j^p$ (associated with the nodes $V_i^o$ and $V_j^p$) should be close in direction to at least one of the motion tangents $\mathbf d_i$ and $\mathbf d_j$.
-%Then one can think that the edge direction $\mathbf{d}_{i,j}$ should be either $\mathbf{d}_i$ or $\mathbf{d}_j$, as is shown in Figure \ref{fig:node_DirectionA}. Any edge parallel to $\mathbf{d}_i$ or $\mathbf{d}_j$ should be encouraged.
+We define the edge direction $\mathbf{d}_{i,j}$ between any two nodes $V_i^o$ and $V_j^p$ in the partite set $i$ and partite set $j$, respectively, as the consistency of the 3D motion with the motion tangents $\mathbf d_i$ or $\mathbf d_j$ (see Section  \ref{sec:detection}). This definition comes from the intuition that the edge direction should be compliant with the motion tangent observed in the images. Given the motion of two objects $i$ and $j$, and their respective motion tangents $\mathbf d_i$ and $\mathbf d_j$, it is clear that the edge direction between the points $\mathbf{\hat{X}}_i^o$ and $\mathbf{\hat{X}}_j^p$ (associated with the nodes $V_i^o$ and $V_j^p$) should be close to at least one of the motion tangents $\mathbf d_i$ and $\mathbf d_j$.
 Therefore, we define the edge cost $e(V_i^o,V_j^p)$ of the edge between the nodes $V_i^o$ and $V_j^p$ as
 
 \begin{equation}
 \label{eq:edgecost}
-e(V_i^o,V_j^p)=\text{min}(\|\mathbf{d}_i\times(\mathbf{X}_i^{o}-\mathbf{X}_j^{p})\|_2^2, \|\mathbf{d}_j\times(\mathbf{X}_i^{o}-\mathbf{X}_j^{p})\|_2^2) +\lambda\|\mathbf{X}_i^{o}-\mathbf{X}_j^{p}\|_2^2.
+e(V_i^o,V_j^p)=\text{min}(\|\mathbf{d}_i\times(\mathbf{\hat{X}}_i^{o}-\mathbf{\hat{X}}_j^{p})\|_2^2, \|\mathbf{d}_j\times(\mathbf{\hat{X}}_i^{o}-\mathbf{\hat{X}}_j^{p})\|_2^2) +\lambda\|\mathbf{\hat{X}}_i^{o}-\mathbf{\hat{X}}_j^{p}\|_2^2.
 \end{equation}
 If only considering the first term in Equation (\ref{eq:edgecost}), edges with 3D motion directions that are approximately parallel to $\mathbf{d}_i$ or $\mathbf{d}_j$ have lower  cost than those are at an angle to both $\mathbf{d}_i$ and $\mathbf{d}_j$. For instance, %for the edge cost from Equation (\ref{eq:edgecost}),
 Edge 1 and Edge 3 in Figure \ref{fig:node_DirectionB} have a relatively lower cost than Edge 2 because Edge 1 is parallel to $\mathbf{d}_j$ and Edge 3 is parallel to $\mathbf{d}_i$.
@@ -184,7 +197,7 @@ Edge 1 and Edge 3 in Figure \ref{fig:node_DirectionB} have a relatively lower co
 \end{figure}
 
 A generalized minimum spanning tree (GMST) on the graph $\cal{G}(V,E)$ is a tree of minimal cost that spans \emph{exactly one node} from each partite set $V_i$. The GMST problem degenerates to a typical minimum spanning tree problem \cite{Cormen:2001:IA:580470} if each of the partite sets contains only one node.
-For our proposed graph, it means a GMST includes exactly one hypothesized 3D point from each observation. Furthermore, a GMST prefers the edge $e(V_i^o,V_j^p)$ that has a small cost and is compliant with the motion tangents in the images, as those edges have lower edge cost. Accordingly, a GMST is our desired solution for estimating the object class trajectory. Note that if we sample an infinite number of 3D points along each viewing ray, the corresponding GMST problem is equivalent to the original formulation (Equation (\ref{equ:costFunc})).% before discretization for the multipartite graph formulation.
+For our proposed graph, it means a GMST includes exactly one hypothesized 3D point from each observation. Furthermore, a GMST prefers the edge $e(V_i^o,V_j^p)$ that has a small cost and is compliant with the motion tangents in the images, as those edges have lower edge cost. Accordingly, a GMST is our desired solution for estimating the object class trajectory. Note that if we sample an infinite number of 3D points along each viewing ray, the corresponding GMST problem is equivalent to the original formulation in Equation (\ref{equ:costFunc}).% before discretization for the multipartite graph formulation.
 
 The multipartite graph defined above contains a large number of edges, which increases the complexity of computing the GMST.
 We use a deterministic method introduced by \citet{Ferreira_ESWA2012} to remove the redundant edges that are guaranteed not to be included in the GMST. We show a specific toy example in Figure \ref{fig:node_edgeRemove} to illustrate the method. If the cost of edge $(u,v)$ is larger than any cost of the 6 edges $(u,n_l)$ and $(v,n_l)$, $l=1,2,3$, the edge $(u,v)$ is safe to be removed. A simple proof is that if edge $(u,v)$ exists in the computed GMST, we could remove edge $(u,v)$ and replace it with one of the 6 edges to obtain a new GMST with lower cost. Therefore, edge $(u,v)$ can not be present in the GMST. Moreover, it is plausible to explore other ways to remove edges based on given prior information. For instance, if it is known the pairwise neighboring 3D objects are close in 3D space, we can safely remove the edges that connect two spatially distant point hypotheses by applying a predefined threshold.
@@ -194,17 +207,17 @@ The GMST problem was first introduced by \citet{MyungLT_95} and has been extensi
 We exploit the state-of-the-art GRASP-based approach proposed by Ferreira \etal \cite{Ferreira_ESWA2012}. GRASP (Greedy Randomized Adaptive Search Procedure) is a metaheuristic that consists of iterations comprising two phases: 1) solution construction and 2) solution improvement through local search. \citet{Ferreira_ESWA2012} propose a method that considers several solution construction algorithms, a local search procedure, and two additional mechanisms: path-relinking and iterative local search. We refer readers to their paper \cite{Ferreira_ESWA2012} for more details.
 
 \subsection{Continuous Refinement}
-The output of GMST computation is the estimation of the 3D points $\mathbf{\widehat{X}}$ and the adjacency topology $\mathbf{p}$ of the object class trajectory. Then, $\mathbf{d}_{i,j}$ is chosen to be one of $\mathbf{d}_i$ and $\mathbf{d}_j$  that has smaller angle to the vector $\mathbf{\widehat{X}}_i - \mathbf{\widehat{X}}_j$,
+The output of GMST computation is the estimation of the 3D points (denoted as $\mathbf{\widehat{X}}_i$ for object $i$) and the adjacency topology $\mathbf{p}$ of the object class trajectory. Then, $\mathbf{d}_{i,j}$ is chosen to be one of $\mathbf{d}_i$ and $\mathbf{d}_j$  that has smaller angle to the vector $\mathbf{\hat{X}}_i - \mathbf{\hat{X}}_j$,
 \begin{equation}
-\mathbf{d}_{i,j}= \underset{\mathbf{d}\in{\{\mathbf{d}_i, \mathbf{d}_j}\} }{\arg\!\max}(|\mathbf{d} \cdot (\mathbf{\widehat{X}}_i - \mathbf{\widehat{X}}_j)| ),
+\mathbf{d}_{i,j}= \underset{\mathbf{d}\in{\{\mathbf{d}_i, \mathbf{d}_j}\} }{\arg\!\max}(|\mathbf{d} \cdot (\mathbf{\hat{X}}_i - \mathbf{\hat{X}}_j)| ),
 %\mathbf{d_{i,j}} = \text
 \end{equation}
-where $\cdot$ is the vector dot product.
-We fix the adjacency $\mathbf{p}$ given by the GMST and add a final continuous refinement step for the 3D object position $\mathbf{\hat{X}}_i$, through a convex program optimization over variable $\mathbf{t}$
+where operator $\cdot$ is the vector dot product.
+We fix the adjacency $\mathbf{p}$ given by the GMST and continue with a final continuous refinement step for the 3D object position, through a convex program optimization over variable $\mathbf{t}$
 %To achieve this we fix the adjacency $p$ and only optimize over the object positions $\mathbf{t}$ in Equation (\ref{equ:costFunc}). This leads to the following optimization problem:
 \begin{equation}
 \underset{\mathbf{t}} { \text{min} }
-\sum_{(i,j)\in{\mathbf{p}}}{\|\mathbf{d}_{i,j}\times(\mathbf{X}_i-\mathbf{X}_j)\|_2^2 + \lambda\|\mathbf{X}_i-\mathbf{X}_j\|_2^2}.
+\sum_{(i,j)\in{\mathbf{p}}}{\|\mathbf{d}_{i,j}\times(\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j))\|_2^2 + \lambda\|\mathbf{X}_i(t_i)-\mathbf{X}_j(t_j)\|_2^2}.
 \label{equ:costFunc_continuous}
 \end{equation}
 
@@ -214,7 +227,7 @@ Now, we analyze the reconstructability of the proposed method. That is, we deter
 However, we find that having the motion tangent constraint reduces the possibility of finding the incorrect adjacency $\mathbf{p}$. 
 Hence, we focus on  the reconstructability of the continuous method in Equation (\ref{equ:costFunc_continuous}) given the adjacency $\mathbf{p}$.
 
-Assume we already know the ground truth 3D point $\mathbf{{X}}_i^*$ of object $i$, $i=1,\dots,N$. Given that $\mathbf{{X}}_i^*$ is present on the viewing ray $\mathbf{X}_i$, we move the camera center $\mathbf{C}_i$ to $\mathbf{X}_i^*$ along the ray $\mathbf{X}_i(t)$ in direction $\mathbf{r}_i$. Then any point on the line that passes through $\mathbf{X}_i^*$ and has ray direction $\mathbf{r}_i$ can be represented as $\mathbf{X}_i (s_i)= \mathbf{X}_i^* + s_i \cdot \mathbf{r}_i$, where $s_i$ is the signed distance along the viewing ray (not the positive distance as defined by the $t_i$). Then Equation (\ref{equ:costFunc_continuous}) can be reformulated as
+Assume we already know the ground truth 3D point $\mathbf{{X}}_i^*$ of object $i$, $i=1,\dots,N$. Given that $\mathbf{{X}}_i^*$ is present on the viewing ray $\mathbf{X}_i$, we move the camera center $\mathbf{C}_i$ to $\mathbf{X}_i^*$ along the ray $\mathbf{X}_i(t)$ in direction $\mathbf{r}_i$. Then any point on the line that passes through $\mathbf{X}_i^*$ and has ray direction $\mathbf{r}_i$ can be represented as $\mathbf{X}_i (s_i)= \mathbf{X}_i^* + s_i \mathbf{r}_i$, where $s_i$ is the signed distance along the viewing ray (not the positive distance as defined by the $t_i$). Then Equation (\ref{equ:costFunc_continuous}) can be reformulated as
 \begin{equation}
 \label{equ:costFunc_analysis}
 \underset{\mathbf{s}} { \text{min} }
